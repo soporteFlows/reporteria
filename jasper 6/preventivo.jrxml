@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="preventivo" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="17c1e2f1-534b-45a6-9013-051b236ca666">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="DynamicStyle" mode="Opaque">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{opciondesplegableid} == 11051]]></conditionExpression>
+			<style backcolor="#FF6565"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{opciondesplegableid} == 11050]]></conditionExpression>
+			<style backcolor="#FAC319"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{opciondesplegableid} == 11049]]></conditionExpression>
+			<style backcolor="#FAE6A8"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="fechaDesde" class="java.sql.Date"/>
+	<parameter name="fechaHasta" class="java.sql.Date"/>
+	<parameter name="prioridad" class="java.lang.Integer"/>
+	<parameter name="patente" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    descrip,
+    opciondesplegableid,
+    fechacompromiso,
+    fecha,
+    notas,
+    referenciatexto,
+    clientname,
+    rc.valor
+FROM test9000.registrocab registrocab
+INNER JOIN test9000.registrocabseq rc ON rc.registrocabid = registrocab.id
+WHERE statusflowid IN (566, 593, 594, 600)
+AND (registrocab.fecha BETWEEN 
+    CAST(COALESCE($P{fechaDesde}, '2000-01-01') AS DATE) 
+    AND (CAST(COALESCE($P{fechaHasta}, CURRENT_DATE) AS DATE) + INTERVAL '5 months'))
+    AND (registrocab.opciondesplegableid = $P{prioridad} OR COALESCE($P{prioridad}, 0) = 0)
+	AND (UPPER(descrip) = UPPER($P{patente}) OR COALESCE($P{patente}, '') = '')
+ORDER BY 
+    opciondesplegableid IS NULL ASC, 
+    opciondesplegableid DESC,
+    fecha ASC;
+]]>
+	</queryString>
+	<field name="descrip" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="opciondesplegableid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="opciondesplegableid"/>
+		<property name="com.jaspersoft.studio.field.label" value="opciondesplegableid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fechacompromiso" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[la fecha del presupuesto]]></fieldDescription>
+	</field>
+	<field name="notas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notas"/>
+		<property name="com.jaspersoft.studio.field.label" value="notas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[son las que ve el cliente, a los campos que empiezan con Obs no los ve.]]></fieldDescription>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[estos e usa cuando son prospectos, o sea que no hay un clientid]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="valor"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocabseq"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="-3" y="10" width="808" height="18" forecolor="#6A8EB3" uuid="f868b196-e3b6-41b5-a296-e7a471f942dc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#6A8EB3"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#6A8EB3"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#6A8EB3"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#6A8EB3"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Mantenimiento Preventivo]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="62" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="30" width="50" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="c6892601-bd80-4f37-81bf-ec8a304c38dc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[OT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="53" y="30" width="68" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="aabfe3cf-2ffb-48d6-af06-e7eeffd18d13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="123" y="30" width="68" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="dc46b60d-73a4-4c5f-90cd-3d70f291555d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ Fecha
+compromiso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="281" y="30" width="219" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="61649e25-d113-434b-b973-c65c5b6a9d8c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Referecia
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="661" y="30" width="148" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="b8da2c77-c02c-43a5-88d4-6c6eb3140890"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="503" y="30" width="156" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="41bc26f0-c8fd-4383-8904-6e725206e594"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Notas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="192" y="30" width="88" height="30" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="445ad962-4fbe-4ccb-91c3-637fa34e68d5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Patente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="715" y="5" width="84" height="18" uuid="9e0adadd-9189-40f6-8626-01f50f748079"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Prioridad Baja]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Opaque" x="696" y="6" width="15" height="15" backcolor="#FAE6A8" uuid="3388b2de-0cef-44c0-9ca1-29abb09acf03">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="581" y="6" width="15" height="15" backcolor="#FAC319" uuid="5f68c703-fc32-4bb5-bfd3-0706f331e16a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="600" y="5" width="84" height="18" uuid="ecf02963-03fc-424e-9705-2391de12c5f8"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Prioridad Media]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Opaque" x="471" y="6" width="15" height="15" backcolor="#FF6565" uuid="5311bb72-cd9d-4f77-82a3-4cdb886e994c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="490" y="5" width="84" height="18" uuid="a0d4f0a2-954d-422c-8581-7062bccf82f2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[Prioridad Alta]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement style="DynamicStyle" x="0" y="0" width="52" height="23" uuid="559eeddc-437e-4e9c-beca-e6b5d56980b3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM d, yyyy">
+				<reportElement style="DynamicStyle" x="52" y="0" width="70" height="23" uuid="7e383b11-226a-4099-a1c2-19d360dfb3f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="122" y="0" width="70" height="23" uuid="30ef1e22-de98-4e12-89c4-31f20f166fa3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fechacompromiso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="192" y="0" width="88" height="23" uuid="9f36d68a-0409-4843-a201-6d0c034eaf92">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{descrip}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="280" y="0" width="222" height="23" uuid="0371f7f1-ab34-473c-933c-658d137460ab">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{referenciatexto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="502" y="0" width="158" height="23" uuid="3ab568eb-acb4-4cf3-9c24-ade33a18c4f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{notas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="660" y="0" width="148" height="23" uuid="213cf6ee-8858-409d-ac50-7696e6771db5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.75" lineColor="#B4B5C6"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{clientname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

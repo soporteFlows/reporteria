@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RHSUELDOS" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dd8ef93c-27cd-4f2c-9d09-1e898d7f40ab">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GM"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="ColumnHeader" mode="Opaque" forecolor="#FFFFFF" backcolor="#486666" hTextAlign="Center" vTextAlign="Middle" fontSize="15">
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0"/>
+			<rightPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="RowStyle" hTextAlign="Center" vTextAlign="Middle">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#ECF0F1"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="fechaDesde" class="java.sql.Date"/>
+	<parameter name="fechaHasta" class="java.sql.Date"/>
+	<parameter name="id" class="java.lang.Integer"/>
+	<parameter name="nombre" class="java.lang.String"/>
+	<parameter name="rol" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 
+    R.clientid AS id,
+    R.fecha AS fecha, 
+    R.clientname AS Nombre,
+    R.referenciatexto AS descripcion,
+    R.totalprecio AS TotalSinImpuestos,
+    R.totalimpuestos AS TotalConImpuestos,
+    C.name AS Rol,
+     SUM(R.totalimpuestos) OVER() AS TotalGeneral
+FROM test9000.registrocab R
+INNER JOIN test9000.perfiles P ON P.id = R.clientid
+INNER JOIN test9000.categoriasperfiles CP ON CP.perfilid = P.id
+INNER JOIN test9000.categorias C ON CP.categoriaid = C.id
+WHERE C.id IN (1082, 1084) 
+  AND flowid = 10150
+  AND (
+        COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = fecha
+        OR fecha BETWEEN COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '6 month') AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    )
+  AND ($P{id} IS NULL OR R.clientid = $P{id})
+  AND ($P{nombre} IS NULL OR R.clientname ILIKE CONCAT('%', $P{nombre}, '%'))
+  AND ($P{rol} IS NULL OR C.name ILIKE CONCAT('%', $P{rol}, '%'))
+ORDER BY R.clientname, R.fecha;]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[la fecha del presupuesto]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="totalsinimpuestos" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="totalsinimpuestos"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalsinimpuestos"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="totalconimpuestos" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="totalconimpuestos"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalconimpuestos"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="rol" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rol"/>
+		<property name="com.jaspersoft.studio.field.label" value="rol"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="totalgeneral" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="totalgeneral"/>
+		<property name="com.jaspersoft.studio.field.label" value="totalgeneral"/>
+	</field>
+	<variable name="total" class="java.lang.Double" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{totalconimpuestos}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{nombre}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement mode="Opaque" x="0" y="3" width="555" height="26" forecolor="#FFFFFF" backcolor="#2C3E50" uuid="5921db4f-d810-49e6-8a7b-b2e2a3b1b58d">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+						<paragraph leftIndent="20"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement style="ColumnHeader" x="280" y="30" width="100" height="20" uuid="47727dff-018c-42ac-81e1-93de5c1b951a"/>
+					<text><![CDATA[Rol
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="ColumnHeader" x="10" y="30" width="270" height="20" uuid="4e793c31-fc6a-4d65-acc2-53319da79541"/>
+					<text><![CDATA[Descripcion]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="ColumnHeader" x="380" y="30" width="165" height="20" uuid="3b0fb5e7-687b-4bde-9a8d-0791a329a7f8"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23">
+				<textField pattern="#,##0.00#;#,##0.00#-">
+					<reportElement style="RowStyle" x="394" y="3" width="150" height="20" uuid="3bb52abc-e880-4ba7-ae95-eff951039608"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="RowStyle" x="369" y="3" width="25" height="20" uuid="c4ee1fc3-765b-4c58-9e0b-1435524d9e6e"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA["$"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="231" y="3" width="138" height="20" forecolor="#FFFFFF" backcolor="#34495E" uuid="532e83d4-cc48-4683-9b67-0d23c1815a5f">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<leftPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<bottomPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<rightPen lineWidth="1.0" lineColor="#BDC3C7"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font size="14" isBold="true"/>
+						<paragraph leftIndent="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total "]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Group2">
+		<groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+		<groupHeader>
+			<band height="27">
+				<textField pattern=" dd MMMM, yyyy">
+					<reportElement style="RowStyle" mode="Opaque" x="11" y="3" width="120" height="16" forecolor="#2C3E50" backcolor="#D6DBDF" uuid="8b5de0cd-3bf1-4b69-a1f2-f3ae0940f964">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BDC3C7"/>
+						<topPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<leftPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<bottomPen lineWidth="1.0" lineColor="#BDC3C7"/>
+						<rightPen lineWidth="1.0" lineColor="#BDC3C7"/>
+					</box>
+					<textElement textAlignment="Left">
+						<font isBold="true"/>
+						<paragraph leftIndent="20"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement x="10" y="22" width="534" height="1" uuid="21e18368-f224-40d1-b16b-358c7b513581"/>
+					<graphicElement>
+						<pen lineColor="#2C3E50"/>
+					</graphicElement>
+				</rectangle>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="9"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="31">
+			<staticText>
+				<reportElement x="0" y="1" width="555" height="30" forecolor="#486666" uuid="8ef66fb9-b91f-4862-bcea-ac390a298876">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUELDOS / RETIROS]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="39" splitType="Stretch">
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement mode="Opaque" x="415" y="9" width="140" height="30" forecolor="#0B3558" backcolor="#D0EBFF" uuid="c4301fda-76ae-4c8c-8fbc-cdbeb3d6968b"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalgeneral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="210" y="9" width="180" height="30" forecolor="#FFFFFF" backcolor="#2C3E50" uuid="d0c7c7bc-914d-44f2-9ead-8471b1223241"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[ Total de la consulta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="390" y="9" width="25" height="30" forecolor="#0B3558" backcolor="#D0EBFF" uuid="1311a44d-ea74-423f-b1b2-37205e1d6e23"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[$]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement style="RowStyle" x="10" y="2" width="270" height="20" uuid="e72a8ac6-3504-497a-b2e1-f300e7389336"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement style="RowStyle" x="405" y="2" width="139" height="20" uuid="9f8d3d11-bc95-4a89-bacf-28a0949eda2b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{totalconimpuestos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="280" y="2" width="100" height="20" uuid="44a32e92-faf0-41ab-b368-494ad351166c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{rol}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="380" y="2" width="25" height="20" uuid="52e00c32-6f60-47d4-9000-643155514163"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["$"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cubiertas" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a9892349-3ea1-4901-800a-7ecd9002df9f">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="DynamicStyle" mode="Opaque">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11019]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#63264A"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11020]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#3D0B37"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11021]]></conditionExpression>
+			<style backcolor="#C0D684"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11022]]></conditionExpression>
+			<style backcolor="#FFFFCC"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11023]]></conditionExpression>
+			<style backcolor="#FFCC99"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11024]]></conditionExpression>
+			<style backcolor="#CCE5FF"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11025]]></conditionExpression>
+			<style backcolor="#FFD6CC"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11026]]></conditionExpression>
+			<style backcolor="#FF8C42"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{recapador} == 11027]]></conditionExpression>
+			<style backcolor="#6699CC"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="patente" class="java.lang.String">
+		<parameterDescription><![CDATA[$P{patente} == null || $P{patente}.trim().isEmpty() ? null : $P{patente}]]></parameterDescription>
+	</parameter>
+	<parameter name="nombre" class="java.lang.String"/>
+	<parameter name="recapador" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[WITH parent AS (
+    SELECT DISTINCT
+        ac.id, 
+        a.nombre,  
+        a.internalcode, 
+        a.descrip, 
+        ac.*
+    FROM test9000.articuloscompuestos ac
+    INNER JOIN test9000.articulos a ON a.id = ac.parentarticuloid
+)
+SELECT DISTINCT
+    a.nombre, 
+    a.descrip AS descripcion,
+    a.categid AS recapador,
+    p.parentarticuloid, 
+    p.internalcode AS patente,  
+    p.descrip AS tipo,  
+    c.name AS posicion
+FROM test9000.articulos a 
+LEFT JOIN parent p ON p.articuloid = a.id
+LEFT JOIN test9000.articuloscompuestos ac2 ON ac2.articuloid = a.id
+LEFT JOIN test9000.categorias c ON c.id = ac2.compvariableid
+WHERE a.categid BETWEEN 11018 AND 11027
+AND (
+    $P{patente} IS NULL 
+    OR TRIM($P{patente}) = ''
+    OR (p.internalcode = UPPER(TRIM($P{patente})) AND ac2.compvariableid IS NOT NULL)
+)
+AND (
+    $P{nombre} IS NULL 
+    OR TRIM($P{nombre}) = ''
+    OR UPPER(a.nombre) LIKE UPPER(CONCAT('%', TRIM($P{nombre}), '%'))
+)
+AND (
+    $P{recapador} IS NULL 
+    OR TRIM($P{recapador}) = ''
+    OR a.categid = CAST($P{recapador} AS INTEGER)
+)
+ORDER BY a.categid DESC]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="recapador" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="recapador"/>
+		<property name="com.jaspersoft.studio.field.label" value="recapador"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="parentarticuloid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="parentarticuloid"/>
+		<property name="com.jaspersoft.studio.field.label" value="parentarticuloid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articuloscompuestos"/>
+	</field>
+	<field name="patente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="patente"/>
+		<property name="com.jaspersoft.studio.field.label" value="patente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="posicion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="posicion"/>
+		<property name="com.jaspersoft.studio.field.label" value="posicion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="56" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="11" width="810" height="30" forecolor="#6A8EB3" uuid="1976f49c-bd8c-4752-984e-154a152c6b20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{patente} == null ? "CUBIERTAS EN DEPOSITO" : "CUBIERTAS EN "+$P{patente}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="45">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="25" width="120" height="20" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="db3e48a3-7254-4b70-92ef-05b79a39a749"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[MARCA CODIGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="120" y="25" width="280" height="20" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="f7c6a3b2-58c0-4274-8ee0-5ebd487ee1d5"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="400" y="25" width="160" height="20" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="13754452-895b-4787-83a6-964defc7fb8c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[RECAPADO ?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" mode="Opaque" x="560" y="25" width="160" height="20" forecolor="#FFFFFF" backcolor="#6A8EB3" uuid="86445776-73e9-4610-a875-9f599991e017">
+					<printWhenExpression><![CDATA[$P{patente} != null && !$P{patente}.trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[POSICION]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21">
+			<textField>
+				<reportElement x="0" y="0" width="120" height="20" uuid="92d21979-aed4-4f5d-a5c0-b0c467154280"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="0" width="280" height="20" uuid="340bf6e0-140e-4ce8-920e-bb9fb76e5e71"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="DynamicStyle" x="400" y="0" width="160" height="20" uuid="fb5c8c9c-930c-424f-a9cb-1c2446f64bba"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{recapador} == 11019 ? "HOMBRO" :
+$F{recapador} == 11020 ? "RECAPADA" :
+$F{recapador} == 11021 ? "NUEVA" :
+$F{recapador} == 11022 ? "1.8 Cubiertas" :
+$F{recapador} == 11023 ? "USADA" :
+$F{recapador} == 11024 ? "AG842XV LAMBERT" :
+$F{recapador} == 11025 ? "TACO" :
+$F{recapador} == 11026 ? "SIN RECAPAR" :
+$F{recapador} == 11027 ? "SOPLADA" :
+"Desconocido"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="0" width="160" height="20" uuid="01d88bd0-1c03-4451-bb3c-64ffd0ff01b3">
+					<printWhenExpression><![CDATA[$P{patente} != null && !$P{patente}.trim().isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

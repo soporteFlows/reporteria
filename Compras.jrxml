@@ -1,0 +1,285 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Blank_A4_1" language="java" columnCount="1" pageWidth="1050" pageHeight="842" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9e5ad9e-2b9b-4825-a489-6f191cda92b8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="net.sf.jasperreports.data.source.empty" value="true"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="165"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="829"/>
+	<parameter name="Patente" class="java.lang.String">
+		<description><![CDATA[Ingresar Patente]]></description>
+	</parameter>
+	<parameter name="fechaDesde" class="java.sql.Date">
+		<description><![CDATA[]]></description>
+	</parameter>
+	<parameter name="fechaHasta" class="java.sql.Date">
+		<description><![CDATA[]]></description>
+	</parameter>
+	<parameter name="Id" forPrompting="false" class="java.lang.Integer"/>
+	<parameter name="VALOR" class="java.lang.Integer"/>
+	<query language="SQL"><![CDATA[SELECT 
+    r.id,
+    r.descrip,
+    r.fecha, 
+    a.nombre,
+    rc.cantidad,
+    rc.preciounit,
+    rc.preciototal
+FROM test9000.registrocab r
+INNER JOIN test9000.registrocuerpo rc ON rc.presupcabid = r.id
+INNER JOIN test9000.depositosarticulos da ON da.id = rc.articulodepositoid
+INNER JOIN test9000.articulos a ON a.id = da.articuloid
+WHERE r.flowid IN (10303, 11013, 10991)
+AND clientname NOT IN (
+    'PETROLERA SUQUIA SRL',
+    'CORTONA Y PAUTASSO S.A',
+    'POSTA DEL MERCOSUR SRL'
+)
+AND r.fecha BETWEEN 
+    CAST(COALESCE($P{fechaDesde}, '2000-01-01') AS DATE) 
+    AND CAST(COALESCE($P{fechaHasta}, CURRENT_DATE) AS DATE)
+AND (UPPER(r.descrip) = UPPER($P{Patente}) OR $P{Patente} IS NULL)
+AND (r.id = $P{Id} OR $P{Id} IS NULL)
+ORDER BY r.descrip ASC, r.flowid ASC, r.fecha ASC;
+]]></query>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="descrip" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha" class="java.lang.String">
+		<description><![CDATA[la fecha del presupuesto]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="secuenciaid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="secuenciaid"/>
+		<property name="com.jaspersoft.studio.field.label" value="secuenciaid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocabseq"/>
+	</field>
+	<field name="valor" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="valor"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocabseq"/>
+	</field>
+	<field name="cantidad" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="preciounit" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="preciounit"/>
+		<property name="com.jaspersoft.studio.field.label" value="preciounit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="preciototal" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="preciototal"/>
+		<property name="com.jaspersoft.studio.field.label" value="preciototal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<variable name="TotalPorDia" resetType="Group" calculation="Sum" resetGroup="Group2" class="java.lang.Double">
+		<expression><![CDATA[$F{preciototal}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<group name="Group1">
+		<expression><![CDATA[$F{descrip}]]></expression>
+		<groupHeader>
+			<band height="37">
+				<element kind="textField" uuid="7ca33be2-bcd9-46f0-b541-49cbcbf86d6b" mode="Opaque" x="1" y="14" width="1008" height="23" forecolor="#FFFFFF" backcolor="#5F7C9C" fontName="Roboto Black" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+					<paragraph leftIndent="10"/>
+					<expression><![CDATA["PATENTE  "+$F{descrip}]]></expression>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</element>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group2">
+		<expression><![CDATA[$F{fecha}]]></expression>
+		<groupHeader>
+			<band height="25">
+				<element kind="textField" uuid="7fc6bf2b-92e7-4e44-b8db-1f43afa8c684" mode="Opaque" x="80" y="2" width="820" height="20" forecolor="#FFFFFF" backcolor="#9C9A9A" fontName="Roboto Medium" fontSize="12.0" pattern="d 'de' MMMM , yyyy" hTextAlign="Left" vTextAlign="Middle">
+					<paragraph leftIndent="10"/>
+					<expression><![CDATA[$F{fecha}]]></expression>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="32">
+				<element kind="textField" uuid="5644b7ab-4406-484e-8bd3-1fef012e5c88" mode="Opaque" x="743" y="7" width="100" height="20" forecolor="#002366" backcolor="#E0F7FA" fontName="Roboto Medium" fontSize="12.0" pattern="¤#,##0.00;¤-#,##0.00" hTextAlign="Center" vTextAlign="Middle">
+					<paragraph rightIndent="10"/>
+					<expression><![CDATA[$V{TotalPorDia}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<box>
+						<pen lineColor="rgba(64, 64, 64, 0.83137256)"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+				<element kind="staticText" uuid="e5891f7e-67a4-414a-82c7-e12784cba1ec" mode="Opaque" x="593" y="7" width="150" height="20" forecolor="#002366" backcolor="#E0F7FA" fontName="Roboto Medium" fontSize="13.0" hTextAlign="Center" vTextAlign="Middle">
+					<paragraph leftIndent="10"/>
+					<text><![CDATA[Total de la compra]]></text>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#6A8EB3"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="56" splitType="Stretch">
+		<element kind="staticText" uuid="2a31d488-8f1d-4744-8435-2d56b5812aa3" mode="Opaque" x="0" y="0" width="1010" height="56" forecolor="#FFFFFF" backcolor="#6A8EB3" fontName="Roboto Black" fontSize="25.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[COMPRAS]]></text>
+		</element>
+		<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+	</title>
+	<columnHeader height="25">
+		<element kind="staticText" uuid="5dc3ea67-9d30-4460-be54-8e27628fcc34" x="198" y="6" width="279" height="19" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Descripcion ]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<pen lineColor="#6A8EB3"/>
+				<topPen lineWidth="1.0" lineStyle="Solid"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="1543f749-28a6-4242-ae4b-d53ee8b37af3" x="477" y="6" width="116" height="19" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Cantidad]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<pen lineColor="#6A8EB3"/>
+				<topPen lineWidth="1.0" lineStyle="Solid"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="0f0a6f81-2563-4a8d-89bb-69ed0ddfa57f" x="593" y="6" width="150" height="19" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[$Precio Unitario]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<pen lineColor="#6A8EB3"/>
+				<topPen lineWidth="1.0" lineStyle="Solid"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="8c95a32e-e49d-43cc-be74-9bd9ff91a9f4" x="743" y="6" width="100" height="19" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Precio Total]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<pen lineColor="#6A8EB3"/>
+				<topPen lineWidth="1.0" lineStyle="Solid"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="220d7a27-8190-4d6e-8ab5-937c1e6ecd3e" x="104" y="6" width="94" height="19" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Fecha]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<pen lineColor="#6A8EB3"/>
+				<topPen lineWidth="1.0" lineStyle="Solid"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<element kind="textField" uuid="b6bdd1df-612a-4f41-9056-72aa499bf4c0" x="198" y="5" width="280" height="20" rotation="None" fontName="Roboto Medium" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{nombre}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<box>
+					<pen lineColor="rgba(64, 64, 64, 0.83137256)"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="ddbf520e-02f8-4b63-ab03-57b26417ecff" x="477" y="5" width="116" height="20" fontName="Roboto Medium" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{cantidad}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<box>
+					<pen lineColor="rgba(64, 64, 64, 0.83137256)"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="8d147e84-b750-4492-8f2f-117b36581fa6" x="593" y="5" width="150" height="20" fontName="Roboto Medium" fontSize="12.0" pattern="¤#,##0.00;¤-#,##0.00" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{preciounit}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<box>
+					<pen lineColor="rgba(64, 64, 64, 0.83137256)"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="8bbc3024-ca49-4878-97d0-7978f6dfb5d2" x="743" y="5" width="100" height="20" fontName="Roboto Medium" fontSize="12.0" pattern="¤#,##0.00;¤-#,##0.00" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{preciototal}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<box>
+					<pen lineColor="rgba(64, 64, 64, 0.83137256)"/>
+					<topPen lineWidth="1.0" lineStyle="Solid"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+	<noData height="60">
+		<element kind="staticText" uuid="1a0c00ce-d827-49c8-ba6d-25c0f79023b2" x="360" y="20" width="300" height="30" forecolor="#FC082C" fontSize="19.0" italic="true" hTextAlign="Center">
+			<text><![CDATA[No hay datos para mostrar]]></text>
+		</element>
+	</noData>
+</jasperReport>

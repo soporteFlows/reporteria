@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="946ec2db-cb5f-42c8-aad4-a3e2a25e8a04">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<property name="ireport.jasperserver.url" value="http://reportes.flowsma.com:8100/reportes/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Julián_Britos___Myreports/detalle_cis"/>
+	<property name="ireport.jasperserver.report.resource" value="/Julián_Britos___Myreports/detalle_cis_files/main_jrxml"/>
+	<style name="Style1" mode="Opaque" forecolor="#232323" backcolor="#F4A300" hTextAlign="Center" vTextAlign="Middle" fontSize="16" isBold="true">
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0"/>
+			<rightPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="RowStyle">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E0E0E0"/>
+		</conditionalStyle>
+	</style>
+	<style name="TipoMovimiento">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{tipo_movimiento}.equals("Descarga")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#2E7D32" backcolor="#C8E6C9" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{tipo_movimiento}.equals("Carga")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#C62828" backcolor="#FFCDD2" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{tipo_movimiento}.equals("Ajuste")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FF8F00" backcolor="#FFE082" isBold="true"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="articuloid" class="java.lang.Integer"/>
+	<parameter name="fechaDesde" class="java.sql.Date"/>
+	<parameter name="fechaHasta" class="java.sql.Date"/>
+	<parameter name="param_depositoid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[223]]></defaultValueExpression>
+	</parameter>
+	<parameter name="orden" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ASC"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[WITH disponible_sisterna AS (
+    SELECT SUM(da.cantidad) AS total
+    FROM test9000.depositosarticulos da
+    INNER JOIN test9000.depositos AS d ON d.id = da.depositoid
+    WHERE d.id = $P{param_depositoid}
+),
+saldo_inicial AS (
+    SELECT 
+        da.articuloid,
+        SUM(
+            CASE 
+                WHEN sl.tipoimpacto = -1 THEN - COALESCE(rcp.cantidad, 0)
+                ELSE COALESCE(rcp.cantidad, 0)
+            END
+        ) AS saldo_inicial
+    FROM test9000.stocklog sl
+    INNER JOIN test9000.registrocuerpo rcp ON rcp.id = sl.registrocuerpoid 
+    INNER JOIN test9000.depositosarticulos da ON da.id = rcp.articulodepositoid
+    WHERE sl.fechaimpacto < CAST(COALESCE($P{fechaDesde}, '2000-01-01') AS DATE)
+      AND da.depositoid = $P{param_depositoid}
+      AND da.articuloid = $P{articuloid}
+    GROUP BY da.articuloid
+)
+
+SELECT 
+    da.articuloid,
+    a.nombre, 
+    da.cantidad AS disponible_articulo,
+    COALESCE(rc.referenciatexto, 'N/A') AS referenciatexto,
+    TO_CHAR(sl.fechaimpacto, 'YYYY-MM-DD HH24:MI') AS fechaimpacto_formateada,
+    COALESCE(sl.registrocabid, 0) AS registrocabid,
+    COALESCE(rcp.cantidad, 0) AS cantidad_movimiento,
+    CASE 
+        WHEN sl.tipoimpacto = -1 THEN - COALESCE(rcp.cantidad, 0)
+        ELSE COALESCE(rcp.cantidad, 0)
+    END AS cantidad_ajustada,
+
+    -- Sumar saldo inicial + acumulado
+    COALESCE(si.saldo_inicial, 0) + SUM(
+        CASE 
+            WHEN sl.tipoimpacto = -1 THEN - COALESCE(rcp.cantidad, 0)
+            ELSE COALESCE(rcp.cantidad, 0)
+        END
+    ) OVER (
+        PARTITION BY da.articuloid 
+        ORDER BY sl.fechaimpacto
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS saldo_acumulado,
+
+CASE 
+    WHEN rc.flowid = 11057 THEN 'Ajuste'
+    WHEN 
+        CASE 
+            WHEN sl.tipoimpacto = -1 THEN - COALESCE(rcp.cantidad, 0)
+            ELSE COALESCE(rcp.cantidad, 0)
+        END < 0 
+    THEN 'Carga'
+    ELSE 'Descarga'
+END AS tipo_movimiento,
+
+    SUM(da.cantidad) OVER (PARTITION BY da.articuloid) AS total_articulo,
+    TO_CHAR(COALESCE(ds.total, 0), 'FM999999990.00') AS total_disponible_cisterna
+
+FROM test9000.stocklog sl
+INNER JOIN test9000.registrocuerpo rcp ON rcp.id = sl.registrocuerpoid 
+INNER JOIN test9000.depositosarticulos da ON da.id = rcp.articulodepositoid
+INNER JOIN test9000.articulos a ON a.id = da.articuloid
+INNER JOIN test9000.registrocab rc ON rc.id = sl.registrocabid
+LEFT JOIN test9000.depositos d ON d.id = da.depositoid
+LEFT JOIN disponible_sisterna ds ON 1=1
+LEFT JOIN saldo_inicial si ON si.articuloid = da.articuloid
+WHERE a.id = $P{articuloid}
+  AND (
+        COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = sl.fechaimpacto
+        OR sl.fechaimpacto BETWEEN COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '6 month') AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    )
+    AND d.id = $P{param_depositoid}
+ORDER BY 
+    CASE WHEN $P{orden} = 'ASC' THEN sl.fechaimpacto END ASC,
+    CASE WHEN $P{orden} = 'DESC' THEN sl.fechaimpacto END DESC]]>
+	</queryString>
+	<field name="articuloid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="articuloid"/>
+		<property name="com.jaspersoft.studio.field.label" value="articuloid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="depositosarticulos"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="disponible_articulo" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="disponible_articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="disponible_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="depositosarticulos"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+	</field>
+	<field name="fechaimpacto_formateada" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechaimpacto_formateada"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaimpacto_formateada"/>
+	</field>
+	<field name="registrocabid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="registrocabid"/>
+		<property name="com.jaspersoft.studio.field.label" value="registrocabid"/>
+	</field>
+	<field name="cantidad_movimiento" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_movimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_movimiento"/>
+	</field>
+	<field name="cantidad_ajustada" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_ajustada"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_ajustada"/>
+	</field>
+	<field name="saldo_acumulado" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="saldo_acumulado"/>
+		<property name="com.jaspersoft.studio.field.label" value="saldo_acumulado"/>
+	</field>
+	<field name="tipo_movimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_movimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_movimiento"/>
+	</field>
+	<field name="total_articulo" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="total_articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_articulo"/>
+	</field>
+	<field name="total_disponible_cisterna" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="total_disponible_cisterna"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_disponible_cisterna"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="53">
+			<textField>
+				<reportElement isPrintRepeatedValues="false" mode="Opaque" x="344" y="0" width="210" height="53" forecolor="#0B3558" backcolor="#D0EBFF" uuid="6600e334-3e82-4125-83d5-cccfb00a88c6"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_disponible_cisterna}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="344" height="53" forecolor="#FFFFFF" backcolor="#2E3B4E" uuid="05149a1b-8350-49b4-83d6-4b90908f0ce3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="19"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CISTERNA CON "+ $F{nombre}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="59" splitType="Stretch">
+			<staticText>
+				<reportElement style="Style1" mode="Opaque" x="0" y="30" width="130" height="29" uuid="bf7fc99e-7d5e-4866-8bdb-f6e34f7ed7ae">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Referencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Style1" mode="Opaque" x="344" y="30" width="100" height="29" uuid="27ef4c0a-5963-4a3e-acaa-a265c96db21e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Style1" mode="Opaque" x="130" y="30" width="137" height="29" uuid="3612d541-981e-4cdc-aad4-0b8e23182b2a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Style1" mode="Opaque" x="267" y="30" width="77" height="29" uuid="eb0421aa-34c7-413e-a2f6-8f73dfa7f184">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#2E3B4E"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[Movimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Style1" mode="Opaque" x="444" y="30" width="110" height="29" uuid="677f3f97-f8b1-47ac-b1f3-3dcc38dccfac">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement style="RowStyle" x="344" y="1" width="100" height="17" uuid="d0f91844-d939-4b7e-a00a-6d75effa44e3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cantidad_ajustada}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="130" y="1" width="138" height="17" uuid="ee4efd53-564c-40c5-86f5-f2d29ebd6df6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fechaimpacto_formateada}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="0" y="1" width="130" height="17" uuid="7e7c4788-e1a1-4c60-90fd-119cc41a748a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{referenciatexto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="TipoMovimiento" x="268" y="1" width="76" height="17" uuid="a556430d-dbcf-484c-9471-29d442da745c"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tipo_movimiento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement style="RowStyle" x="444" y="1" width="110" height="17" uuid="e91018f4-a5aa-438d-8194-5b10f09255b0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{saldo_acumulado}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

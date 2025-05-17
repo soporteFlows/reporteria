@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TA004d" pageWidth="1200" pageHeight="3000" columnWidth="1160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="40fe8e25-f7ef-433d-9bc5-8309ca00a8b5">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://reportes.flowsma.com:8100/reportes/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Search_records/TA/TA009e"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="135"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="858"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="624"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="364"/>
+	<property name="ireport.jasperserver.report.resource" value="/Search_records/TA/TA009e_files/main_jrxml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GM"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Style1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E6E6FA"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == true]]></conditionExpression>
+			<style mode="Opaque" backcolor="#FFF4C2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == false]]></conditionExpression>
+			<style mode="Opaque" backcolor="#B3D9FF"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 2]]></conditionExpression>
+			<style mode="Opaque" backcolor="#81C784"/>
+		</conditionalStyle>
+	</style>
+	<style name="Style2">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$F{es_finalizada} && 
+            $F{fechaestimadafin}.before($F{fecha_actual})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FF081C" backcolor="#FFCDD2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$F{es_finalizada} && 
+            $F{fechaestimadafin}.after($F{fecha_actual}) && 
+            $F{fechaestimadafin}.before($F{fecha_limite_proximo_vencimiento})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFA726" backcolor="#FFE0B2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$F{es_finalizada} && 
+            $F{fechaestimadafin}.after($F{fecha_limite_proximo_vencimiento})]]></conditionExpression>
+			<style mode="Opaque" forecolor="#420AFA" backcolor="#C8E6C9"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E6E6FA"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == true]]></conditionExpression>
+			<style mode="Opaque" backcolor="#FFF4C2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == false]]></conditionExpression>
+			<style mode="Opaque" backcolor="#B3D9FF"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 2]]></conditionExpression>
+			<style mode="Opaque" backcolor="#81C784"/>
+		</conditionalStyle>
+	</style>
+	<style name="Style3">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{cumplimiento_plazo}.equals("Antes de tiempo")]]></conditionExpression>
+			<style mode="Opaque" backcolor="#81C784"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{cumplimiento_plazo}.equals("Con retraso")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#D32F2F" backcolor="#FFCDD2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{cumplimiento_plazo}.equals("En el plazo exacto")]]></conditionExpression>
+			<style mode="Opaque" forecolor="#FFA726" backcolor="#FFF4C2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E6E6FA"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == true]]></conditionExpression>
+			<style mode="Opaque" backcolor="#FFF4C2"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{status} == 1 && $F{enpausa} == false]]></conditionExpression>
+			<style mode="Opaque" backcolor="#B3D9FF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="Attribute_database" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="param_logo_imagen" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["repo:/images/" +$P{Attribute_database}.substring($P{Attribute_database}.lastIndexOf("-")+1) + "/LOGO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="param_perfilid" class="java.lang.Integer"/>
+	<parameter name="fechaDesde" class="java.util.Date"/>
+	<parameter name="fechaHasta" class="java.util.Date">
+		<property name="com.jaspersoft.studio.js.ic.type" value="MULTI_LOV"/>
+	</parameter>
+	<parameter name="param_tipo_flujo" class="java.lang.String"/>
+	<parameter name="filtro_estado" class="java.lang.String"/>
+	<parameter name="param_proyecto" class="java.lang.String"/>
+	<parameter name="filtro_cumplimiento" class="java.lang.String"/>
+	<parameter name="Fechas_estado" class="java.lang.Boolean"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+   SUM(CASE WHEN tiempo.enpausa = FALSE THEN tiempo.segundos ELSE 0 END) as horas,
+   SUM(tiempo.segundos) AS tiempo_bruto_segundos,
+  TA.descripcion,
+  SPLIT_PART(TA.descripcion, '#', 1) AS TAdescripcion,
+  TA.orden,
+  TA.instructivoexecid,
+  TA.status,
+  TA.id,
+  TA.fechaestimadainicio,
+  TA.fechaestimadafin,
+  TA.fechainic,
+  TA.fechafin,
+TO_CHAR(TA.fechafin, 'DD/MM/YYYY') AS fechafin_formateada,
+  TA.instructivotareaid,
+  TA.comentarioavance,
+  TA.hsexec,
+  COALESCE(TA.comentarioavance, '') AS comentario,
+  TA.decisiontomada,
+  RC.referenciatexto,
+  RC.clientname,
+  STA.descrip AS actividad,
+  RESPTEXT.id AS respid,
+  RESPTEXT.identificador AS resptxt,
+  PRO.name AS proceso,
+  usuario.id as usuario,
+  inst.tipoinstructivo, 
+   NOW() AS fecha_actual,
+    NOW() + INTERVAL '3 days' AS fecha_limite_proximo_vencimiento,
+ DATE(fechaestimadafin) AS fecha_estimada_solo_fecha,
+    DATE(fechafin) AS fecha_fin_solo_fecha,
+    tiempo.varfechafin AS fecha_pausada ,
+  CASE 
+    WHEN TA.status = 0 THEN 'Sin iniciar'
+    WHEN TA.status = 1 AND BOOL_OR(tiempo.enpausa = TRUE) THEN 'En pausa'
+    WHEN TA.status = 1 THEN 'En proceso'
+    WHEN TA.status = 2 THEN 'Finalizado'
+    ELSE TO_CHAR(TA.fechafin, 'DD/MM/YYYY')
+  END AS ESTADO,
+  CASE 
+        WHEN TA.status = 2 THEN TRUE
+        ELSE FALSE
+    END AS es_finalizada, 
+ CASE 
+    WHEN TA.status = 2 AND TA.fechafin < TA.fechaestimadafin THEN 'Antes de tiempo'
+    WHEN TA.status = 2 AND TA.fechafin BETWEEN TA.fechaestimadafin AND (TA.fechaestimadafin + INTERVAL '24 hours') THEN 'En el plazo exacto'
+    WHEN TA.status = 2 AND TA.fechafin > (TA.fechaestimadafin + INTERVAL '24 hours') THEN 'Con retraso'
+    ELSE ''
+END AS cumplimiento_plazo,
+BOOL_OR(tiempo.enpausa) AS enpausa
+  
+FROM test9000.tareasexec TA
+INNER JOIN test9000.instructivoexec IE ON IE.id = TA.instructivoexecid
+INNER JOIN test9000.instructivo inst ON inst.id = IE.instructivoid 
+INNER JOIN test9000.registrocab RC ON RC.id = IE.registrocabid
+INNER JOIN test9000.statusflows ON test9000.statusflows.id = RC.statusflowid
+INNER JOIN test9000.statuses STA ON STA.id = test9000.statusflows.statusid
+INNER JOIN test9000.categorias PRO ON STA.categid = PRO.ID
+INNER JOIN test9000.tareasexecpersonas TEP ON TEP.tareasexecid = TA.id
+INNER JOIN test9000.perfiles RESPTEXT ON TEP.perfilid = RESPTEXT.id
+INNER JOIN test9000.usuarios usuario ON usuario.perfilid = RESPTEXT.id
+LEFT JOIN LATERAL (
+  SELECT 
+    id AS intervalo_id,
+    fecha AS varfechainic,
+    LEAD(fecha) OVER (PARTITION BY tareasexecid ORDER BY id) AS varfechafin,
+    EXTRACT(EPOCH FROM (LEAD(fecha) OVER (PARTITION BY tareasexecid ORDER BY id) - fecha)) AS segundos,
+        COALESCE(enpausa, FALSE) AS enpausa 
+  FROM test9000.tareasexectiempos
+  WHERE tareasexecid = TA.id
+) tiempo ON TRUE
+
+--FILTROS SEGUN INSTRUCTIVOS
+WHERE (
+    CASE 
+      WHEN $P{param_tipo_flujo} IS NULL 
+           OR $P{param_tipo_flujo} = '0' 
+           OR UPPER($P{param_tipo_flujo}) = 'TODOS' THEN 
+        TRUE
+      WHEN $P{param_tipo_flujo} = '400'
+           OR UPPER($P{param_tipo_flujo}) = 'MANTENIMIENTO' THEN 
+        inst.tipoinstructivo = 400
+      WHEN $P{param_tipo_flujo} = '401'
+           OR UPPER($P{param_tipo_flujo}) = 'PRODUCCION' THEN 
+        inst.tipoinstructivo = 401
+      WHEN $P{param_tipo_flujo} = '406'
+           OR UPPER($P{param_tipo_flujo}) = 'MEJORA' THEN 
+        inst.tipoinstructivo = 406
+      WHEN $P{param_tipo_flujo} = '408'
+           OR UPPER($P{param_tipo_flujo}) = 'PLANIFICACION' THEN 
+        inst.tipoinstructivo = 408
+      WHEN $P{param_tipo_flujo}::TEXT ~ '^[0-9]+$' AND $P{param_tipo_flujo} NOT IN ('0','1','2') THEN 
+        RC.flowid = CAST($P{param_tipo_flujo} AS INTEGER)
+      ELSE FALSE
+    END
+  )
+  -- FILTRO POR PROYECTOS
+AND (
+    -- Proyecto: Si no se especifica o es "TODOS", incluir todo
+    ($P{param_proyecto} IS NULL OR TRIM($P{param_proyecto}) = '' OR UPPER($P{param_proyecto}) = 'TODOS')
+    OR RC.id = CAST($P{param_proyecto} AS INTEGER)
+)
+
+--FILTRO SEGUN FECHAS QUE SOLO AFECTAN A LAS FINALIZADAS
+AND (
+  CASE
+    WHEN COALESCE($P{Fechas_estado}, TRUE) THEN (
+      TA.fechaestimadainicio BETWEEN 
+        COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '1 month') 
+        AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    )
+    ELSE (
+      -- Condición por status
+      (TA.status = 0 AND TA.fechaestimadainicio <= COALESCE($P{fechaHasta}, CURRENT_DATE))
+      OR (TA.status = 1 AND TA.fechaestimadainicio <= COALESCE($P{fechaHasta}, CURRENT_DATE))
+      OR (
+        TA.status = 2 
+        AND (
+          COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = TA.fechaestimadainicio
+          OR TA.fechaestimadainicio BETWEEN 
+              COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '1 month') 
+              AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+        )
+      )
+    )
+  END
+)
+
+--FILTRO DE USUARIOS 
+AND (RESPTEXT.id = $P{param_perfilid} OR COALESCE($P{param_perfilid}, 0) = 0)
+
+--FILTRO POR ESTADOS
+AND (
+    -- Estados: Si no se especifica filtro, incluir todo
+    ($P{filtro_estado} IS NULL OR TRIM($P{filtro_estado}) = '')
+    OR CAST(TA.status AS TEXT) IN ($P{filtro_estado})
+)
+
+AND (
+  $P{filtro_cumplimiento} IS NULL
+  OR TRIM($P{filtro_cumplimiento}) = ''
+  OR (
+    TA.status = 2 AND (
+      ($P{filtro_cumplimiento} = 'Antes de tiempo' AND TA.fechafin < TA.fechaestimadafin)
+      OR ($P{filtro_cumplimiento} = 'En el plazo exacto' AND TA.fechafin BETWEEN TA.fechaestimadafin AND (TA.fechaestimadafin + INTERVAL '24 hours'))
+      OR ($P{filtro_cumplimiento} = 'Con retraso' AND TA.fechafin > (TA.fechaestimadafin + INTERVAL '24 hours'))
+    )
+  )
+)
+GROUP BY
+  TA.descripcion,
+  TA.orden,
+  TA.instructivoexecid,
+  TA.status,
+  TA.id,
+  TA.comentarioavance,
+  TA.decisiontomada,
+  TA.fechaestimadainicio,
+  TA.fechaestimadafin,
+  TA.fechainic,
+  TA.fechafin,
+  TA.instructivotareaid,
+  RC.referenciatexto,
+  STA.descrip,
+  RC.clientname,
+  RESPTEXT.id,
+  RESPTEXT.identificador,
+  PRO.name,
+  RC.totalprecio,
+  TA.hsexec,
+  usuario.id,
+  inst.tipoinstructivo ,
+  tiempo.varfechafin
+ 
+ORDER BY 
+  CASE 
+    WHEN TA.status = 0 THEN 0  -- Sin iniciar primero
+    WHEN TA.status = 1 THEN 1  -- Luego en proceso/pausa
+    ELSE 2                     -- Finalizadas al final
+  END,
+  TA.fechainic DESC, 
+  referenciatexto, 
+  actividad, 
+  instructivoexecid, 
+  orden, 
+  TA.id;]]>
+	</queryString>
+	<field name="horas" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="horas"/>
+		<property name="com.jaspersoft.studio.field.label" value="horas"/>
+	</field>
+	<field name="tiempo_bruto_segundos" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tiempo_bruto_segundos"/>
+		<property name="com.jaspersoft.studio.field.label" value="tiempo_bruto_segundos"/>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="tadescripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tadescripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="tadescripcion"/>
+	</field>
+	<field name="orden" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="orden"/>
+		<property name="com.jaspersoft.studio.field.label" value="orden"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="instructivoexecid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="instructivoexecid"/>
+		<property name="com.jaspersoft.studio.field.label" value="instructivoexecid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="status" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechaestimadainicio" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechaestimadainicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaestimadainicio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechaestimadafin" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechaestimadafin"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaestimadafin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechainic" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechainic"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechainic"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechafin" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechafin"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechafin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechafin_formateada" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechafin_formateada"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechafin_formateada"/>
+	</field>
+	<field name="instructivotareaid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="instructivotareaid"/>
+		<property name="com.jaspersoft.studio.field.label" value="instructivotareaid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="comentarioavance" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comentarioavance"/>
+		<property name="com.jaspersoft.studio.field.label" value="comentarioavance"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="hsexec" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="hsexec"/>
+		<property name="com.jaspersoft.studio.field.label" value="hsexec"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="comentario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comentario"/>
+		<property name="com.jaspersoft.studio.field.label" value="comentario"/>
+	</field>
+	<field name="decisiontomada" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="decisiontomada"/>
+		<property name="com.jaspersoft.studio.field.label" value="decisiontomada"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[estos e usa cuando son prospectos, o sea que no hay un clientid]]></fieldDescription>
+	</field>
+	<field name="actividad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="actividad"/>
+		<property name="com.jaspersoft.studio.field.label" value="actividad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statuses"/>
+	</field>
+	<field name="respid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="respid"/>
+		<property name="com.jaspersoft.studio.field.label" value="respid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="perfiles"/>
+	</field>
+	<field name="resptxt" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="resptxt"/>
+		<property name="com.jaspersoft.studio.field.label" value="resptxt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="perfiles"/>
+	</field>
+	<field name="proceso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="proceso"/>
+		<property name="com.jaspersoft.studio.field.label" value="proceso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="usuario" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.label" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="usuarios"/>
+	</field>
+	<field name="tipoinstructivo" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="tipoinstructivo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipoinstructivo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="instructivo"/>
+	</field>
+	<field name="fecha_actual" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_actual"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_actual"/>
+	</field>
+	<field name="fecha_limite_proximo_vencimiento" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_limite_proximo_vencimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_limite_proximo_vencimiento"/>
+	</field>
+	<field name="fecha_estimada_solo_fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_estimada_solo_fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_estimada_solo_fecha"/>
+	</field>
+	<field name="fecha_fin_solo_fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_fin_solo_fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_fin_solo_fecha"/>
+	</field>
+	<field name="fecha_pausada" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_pausada"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_pausada"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+	</field>
+	<field name="es_finalizada" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="es_finalizada"/>
+		<property name="com.jaspersoft.studio.field.label" value="es_finalizada"/>
+	</field>
+	<field name="cumplimiento_plazo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cumplimiento_plazo"/>
+		<property name="com.jaspersoft.studio.field.label" value="cumplimiento_plazo"/>
+	</field>
+	<field name="enpausa" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="enpausa"/>
+		<property name="com.jaspersoft.studio.field.label" value="enpausa"/>
+	</field>
+	<variable name="FORMAT_HHMMSS" class="java.lang.String">
+		<variableExpression><![CDATA[function formatSeconds(seconds) {
+                if (seconds == null) return "00:00:00";
+                
+                long sec = seconds.longValue();
+                long hours = sec / 3600;
+                long minutes = (sec % 3600) / 60;
+                long seconds = sec % 60;
+                
+                return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
+            function formatDaysHHMMSS(seconds) {
+                if (seconds == null) return "00:00:00";
+                
+                long sec = seconds.longValue();
+                long days = sec / 86400;
+                long hours = (sec % 86400) / 3600;
+                long minutes = (sec % 3600) / 60;
+                long seconds = sec % 60;
+                
+                if (days > 0) {
+                    return days + (days == 1 ? " día " : " días ") + 
+                           String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                } else {
+                    return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                }
+            }
+            ""]]></variableExpression>
+	</variable>
+	<variable name="total_hs_neto" class="java.math.BigDecimal" resetType="Group" resetGroup="INSTRUCTIVO" calculation="Sum">
+		<variableExpression><![CDATA[$F{horas}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="total_hs_bruto" class="java.math.BigDecimal" resetType="Group" resetGroup="INSTRUCTIVO" calculation="Sum">
+		<variableExpression><![CDATA[new java.math.BigDecimal($F{tiempo_bruto_segundos})]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="total_hs_neto_proyecto" class="java.math.BigDecimal" resetType="Group" resetGroup="INSTRUCTIVO" calculation="Sum">
+		<variableExpression><![CDATA[$F{horas}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="total_hs_bruto_proyecto" class="java.math.BigDecimal" resetType="Group" resetGroup="INSTRUCTIVO" calculation="Sum">
+		<variableExpression><![CDATA[new java.math.BigDecimal($F{tiempo_bruto_segundos})]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.math.BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="Total_horas_netas_mes" class="java.math.BigDecimal" incrementType="Group" incrementGroup="INSTRUCTIVO" calculation="Sum">
+		<variableExpression><![CDATA[$V{total_hs_neto_proyecto}]]></variableExpression>
+	</variable>
+	<variable name="Total_horas_brutas_mes" class="java.math.BigDecimal" incrementType="Group" incrementGroup="INSTRUCTIVO"/>
+	<group name="INSTRUCTIVO">
+		<groupExpression><![CDATA[$F{instructivoexecid}]]></groupExpression>
+		<groupHeader>
+			<band height="82">
+				<staticText>
+					<reportElement mode="Opaque" x="440" y="45" width="70" height="32" backcolor="#F2F2F2" uuid="95ecdc35-97d7-4b89-8908-1124de039d20">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[ESTADOS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="510" y="45" width="140" height="16" backcolor="#F2F2F2" uuid="a9a8996f-23e1-4a99-b5b7-6475f6b3ba72">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[FECHAS ESTIMADAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="650" y="45" width="140" height="16" backcolor="#F2F2F2" uuid="0000150c-a61d-461f-aaf4-9320efa4830a">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[FECHAS REALES]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="893" y="45" width="100" height="32" backcolor="#F2F2F2" uuid="310ef983-888a-420d-893c-c8566ccd3e07">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Tiempo neto [h]]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="0" width="960" height="45" forecolor="#7A7A7A" uuid="d8a54614-707c-46bb-9d92-4ae066487e72"/>
+					<box bottomPadding="5"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tareas de:  "  + $F{referenciatexto}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="510" y="61" width="70" height="16" backcolor="#F2F2F2" uuid="da8df3e5-db86-4489-a5b2-0c6590d0b6f5">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[INICIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="580" y="61" width="70" height="16" backcolor="#F2F2F2" uuid="9ddd560c-c94c-46d9-995b-2d5db2b893c8">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[FIN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="650" y="61" width="70" height="16" backcolor="#F2F2F2" uuid="a352eeb1-8d5f-4aa6-8db9-1b4faac66814">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[INICIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="720" y="61" width="70" height="16" backcolor="#F2F2F2" uuid="4225b8ea-aec8-4a00-88a3-e114faf16356">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[FIN]]></text>
+				</staticText>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="45" width="440" height="32" backcolor="#F2F2F2" uuid="a164e1b1-ad1f-4234-aeb6-8b54886339ed"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TAREAS INICIADAS EN "+new java.text.SimpleDateFormat("MMMM", new java.util.Locale("es", "ES")).format($F{fechainic}).toUpperCase()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="993" y="45" width="70" height="32" backcolor="#F2F2F2" uuid="91ad6aa0-e19c-4ae0-88a3-8403d720b930">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Tiempo Bruto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="792" y="45" width="100" height="32" backcolor="#F2F2F2" uuid="acd41f97-a12e-4382-b721-6eb8b1e87d33">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[ Estado de finalización]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="66">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="3" width="790" height="30" backcolor="#F2F2F2" uuid="40e92be5-58d5-4c6e-899c-f69116042516">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="8">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[TOTAL DE HORAS INVERTIDAS]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="790" y="3" width="100" height="30" printWhenGroupChanges="INSTRUCTIVO" uuid="bcce9df6-b202-4620-b739-62f4bdfc19e1"/>
+					<textFieldExpression><![CDATA[$V{total_hs_neto} == null ? "00:00:00" : 
+                        formatDaysHHMMSS($V{total_hs_neto})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="790" y="36" width="100" height="30" printWhenGroupChanges="INSTRUCTIVO" uuid="90d08729-feda-45a6-b43f-510735cac7a2"/>
+					<textFieldExpression><![CDATA[$V{total_hs_neto_proyecto} == null ? "00:00:00" : 
+                        formatDaysHHMMSS($V{total_hs_neto_proyecto})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="TAREASID">
+		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+	</group>
+	<group name="Grupo mes">
+		<groupExpression><![CDATA[$F{fechainic}.getMonth()]]></groupExpression>
+		<groupHeader>
+			<band height="47">
+				<textField>
+					<reportElement style="Style1" positionType="Float" x="0" y="2" width="60" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="38eaf832-b2c0-4b86-9608-4c8ae03df43b">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="628f3f8f-aa34-43a2-b1c0-f8724f0c0b68"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{resptxt}]]></textFieldExpression>
+				</textField>
+				<textField pattern="d/M/yy" isBlankWhenNull="true">
+					<reportElement style="Style1" x="650" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="b4aff0f6-5c7d-4743-83cf-02bafbaa00f6">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{fechainic}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Style1" x="893" y="2" width="100" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="c34d66a7-9c73-4405-84d6-e63d258f5b09">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bahnschrift" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{horas}== null ? "00:00:00" : 
+(
+    (Math.floor($F{horas}) >= 86400) ? 
+        ((long)(Math.floor($F{horas}) / 86400) + 
+         ((long)(Math.floor($F{horas}) / 86400) == 1 ? " día " : " días ") + 
+         String.format("%02d:%02d:%02d", 
+             (long)(Math.floor($F{horas}) % 86400) / 3600, 
+             (long)(Math.floor($F{horas}) % 3600) / 60, 
+             (long)(Math.floor($F{horas}) % 60))) :
+    (Math.floor($F{horas}) >= 3600) ? 
+        String.format("%02d:%02d:%02d", 
+            (long)(Math.floor($F{horas}) / 3600), 
+            (long)(Math.floor($F{horas}) % 3600) / 60, 
+            (long)(Math.floor($F{horas}) % 60)) :
+    (Math.floor($F{horas}) >= 60) ? 
+        String.format("00:%02d:%02d", 
+            (long)(Math.floor($F{horas}) / 60), 
+            (long)(Math.floor($F{horas}) % 60)) :
+    String.format("00:00:%02d", (long)(Math.floor($F{horas})))
+)]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Style1" x="440" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="a1174714-fe12-42c4-a0ab-ca7593f9cf76">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{estado}.equals("Sin iniciar") ? "⏳ Sin iniciar" : 
+    ($F{estado}.equals("En pausa") ? "⏸️ Pausada" : 
+    ($F{estado}.equals("En proceso") ? "⚡ Trabajando" : 
+    ($F{estado}.equals("Finalizado") ? "✅ Finalizada" : "❓")))]]></textFieldExpression>
+				</textField>
+				<textField pattern="d/M/yy" isBlankWhenNull="true">
+					<reportElement style="Style2" x="580" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="ab7e21db-0ec8-415a-be41-8d411fb98a82">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{fechaestimadafin}]]></textFieldExpression>
+				</textField>
+				<textField pattern="d/M/yy" isBlankWhenNull="true">
+					<reportElement style="Style1" x="510" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="674f827a-123c-4d42-8b90-a853a0ea46bc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{fechaestimadainicio}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement style="Style1" positionType="Float" x="60" y="2" width="380" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="715ea687-65eb-40ae-87df-00e88f806fc3">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{tadescripcion}+ " - " +$F{comentario}]]></textFieldExpression>
+				</textField>
+				<textField pattern="d/M/yy" isBlankWhenNull="true">
+					<reportElement style="Style1" x="720" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="138bb16e-635b-49ee-9f40-5a266c34d528">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{fechafin_formateada}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement style="Style1" x="993" y="2" width="70" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="9a1ea11a-ee3e-4309-adf2-d153e35b07ba">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tiempo_bruto_segundos} == null ? "00:00:00" : 
+(
+    (Math.floor($F{tiempo_bruto_segundos}) >= 86400) ? 
+        ((long)(Math.floor($F{tiempo_bruto_segundos}) / 86400) + 
+         ((long)(Math.floor($F{tiempo_bruto_segundos}) / 86400) == 1 ? " día " : " días ") + 
+         String.format("%02d:%02d:%02d", 
+             (long)(Math.floor($F{tiempo_bruto_segundos}) % 86400) / 3600, 
+             (long)(Math.floor($F{tiempo_bruto_segundos}) % 3600) / 60, 
+             (long)(Math.floor($F{tiempo_bruto_segundos}) % 60))) :
+    (Math.floor($F{tiempo_bruto_segundos}) >= 3600) ? 
+        String.format("%02d:%02d:%02d", 
+            (long)(Math.floor($F{tiempo_bruto_segundos}) / 3600), 
+            (long)(Math.floor($F{tiempo_bruto_segundos}) % 3600) / 60, 
+            (long)(Math.floor($F{tiempo_bruto_segundos}) % 60)) :
+    (Math.floor($F{tiempo_bruto_segundos}) >= 60) ? 
+        String.format("00:%02d:%02d", 
+            (long)(Math.floor($F{tiempo_bruto_segundos}) / 60), 
+            (long)(Math.floor($F{tiempo_bruto_segundos}) % 60)) :
+    String.format("00:00:%02d", (long)(Math.floor($F{tiempo_bruto_segundos})))
+)]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" hyperlinkType="ReportExecution" hyperlinkTarget="Blank">
+					<reportElement positionType="Float" stretchType="ContainerHeight" x="1240" y="3" width="70" height="40" forecolor="#251DF5" uuid="711383bc-6f40-4517-ae21-677f5e24ed07">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8c3cca40-f570-4196-ad65-8a7b8faf107c"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TAREAS PARCIALES"]]></textFieldExpression>
+					<hyperlinkParameter name="_report">
+						<hyperlinkParameterExpression><![CDATA["/Search_records/TA/TA007"]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<hyperlinkParameterExpression><![CDATA["no"]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="param_tareaexecid">
+						<hyperlinkParameterExpression><![CDATA[$F{id}]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+				</textField>
+				<textField textAdjust="StretchHeight" pattern="#,##0.0##;(#,##0.0##)" isBlankWhenNull="true">
+					<reportElement style="Style3" x="790" y="2" width="103" height="40" printWhenGroupChanges="INSTRUCTIVO" uuid="51cc5c60-2589-4ffe-ac51-e017c2e16497">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box leftPadding="3" rightPadding="3">
+						<pen lineColor="#BFBFBF"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#BFBFBF"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estado}.equals("2") && ($F{cumplimiento_plazo} == null || $F{cumplimiento_plazo}.isEmpty()) ? "Sin fechas estimadas" :
+($F{cumplimiento_plazo} != null && $F{cumplimiento_plazo}.equals("Antes de tiempo") ? "✅ Antes de tiempo" :
+($F{cumplimiento_plazo} != null && $F{cumplimiento_plazo}.equals("Con retraso") ? "⚠ Con retraso" :
+($F{cumplimiento_plazo} != null && $F{cumplimiento_plazo}.equals("En el plazo exacto") ? "⏳ A tiempo" :
+$F{fechafin_formateada})))]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="63">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="100" height="60" uuid="8cef0ffb-4c69-41b8-810c-55fa8c624cc3">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="3" leftPadding="3" bottomPadding="3" rightPadding="3">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA[$P{param_logo_imagen}]]></imageExpression>
+			</image>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="100" y="0" width="860" height="60" printWhenGroupChanges="INSTRUCTIVO" backcolor="#E0E0E0" uuid="64393e4c-857c-4448-b0e5-c235b888fe2c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="3" rightPadding="3">
+					<pen lineWidth="1.0" lineColor="#030303"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Detalle de actividades" + 
+(
+  $P{param_perfilid} == null || $P{param_perfilid} == 0 || $P{param_perfilid}.toString().isEmpty() 
+  ? "" 
+  : " de " + $F{resptxt}
+)]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="40">
+			<textField>
+				<reportElement mode="Opaque" x="790" y="10" width="100" height="30" backcolor="#F0F0F0" uuid="63f26a79-b680-4a36-bf50-5cd9c80428fa"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Total_horas_netas_mes} == null ? "00:00:00" : 
+(
+    ($V{Total_horas_netas_mes}.doubleValue() >= 86400) ? 
+        ((long) ($V{Total_horas_netas_mes}.doubleValue() / 86400) + 
+         ((long) ($V{Total_horas_netas_mes}.doubleValue() / 86400) == 1 ? " día " : " días ") + 
+         String.format("%02d:%02d:%02d", 
+             (long) (($V{Total_horas_netas_mes}.doubleValue() % 86400) / 3600), 
+             (long) (($V{Total_horas_netas_mes}.doubleValue() % 3600) / 60), 
+             (long) ($V{Total_horas_netas_mes}.doubleValue() % 60))) :
+
+    ($V{Total_horas_netas_mes}.doubleValue() >= 3600) ? 
+        String.format("%02d:%02d:%02d", 
+            (long) ($V{Total_horas_netas_mes}.doubleValue() / 3600), 
+            (long) (($V{Total_horas_netas_mes}.doubleValue() % 3600) / 60), 
+            (long) ($V{Total_horas_netas_mes}.doubleValue() % 60)) :
+
+    ($V{Total_horas_netas_mes}.doubleValue() >= 60) ? 
+        String.format("00:%02d:%02d", 
+            (long) ($V{Total_horas_netas_mes}.doubleValue() / 60), 
+            (long) ($V{Total_horas_netas_mes}.doubleValue() % 60)) :
+
+    String.format("00:00:%02d", (long) $V{Total_horas_netas_mes}.doubleValue())
+)]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="0" y="10" width="790" height="30" printWhenGroupChanges="INSTRUCTIVO" backcolor="#F0F0F0" uuid="9db20f90-1ab1-4366-bf0f-18261bafc934">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a6f5c6db-e30b-47a1-9be8-7ca42da6066e"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="4" rightPadding="3">
+					<pen lineWidth="1.0" lineColor="#030303"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL DE LA CONSULTA"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

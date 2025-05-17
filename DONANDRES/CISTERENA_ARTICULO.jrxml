@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="disponible_cisterna" pageWidth="480" pageHeight="842" columnWidth="440" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8eba3174-02fc-43cc-8bd7-0648a005f4fb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://reportes.flowsma.com:8100/reportes/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Julián_Britos___Myreports/disponible_cisterna_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/2_DON_ANDRES/MANTENIMIENTO/disponible_cisterna"/>
+	<property name="com.jaspersoft.studio.report.unit.description" value="Stock / transito / reserva / disponible"/>
+	<parameter name="param_depositoid" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[WITH disponible_sisterna AS (
+    SELECT SUM(da.cantidad) AS total
+    FROM test9000.depositosarticulos da
+    INNER JOIN test9000.depositos AS d ON d.id = da.depositoid
+    WHERE d.id =  $P{param_depositoid} 
+)
+SELECT 
+    d.id,
+    da.articuloid,
+    a.nombre, 
+   TO_CHAR(da.cantidad,'FM999999990.00') AS disponible_articulo,
+    COALESCE(rc.referenciatexto, 'N/A') AS referenciatexto,
+    COALESCE(sl.registrocabid, 0) AS registrocabid,
+    COALESCE(rcp.cantidad, 0) AS cantidad_movimiento,
+    CASE 
+        WHEN sl.tipoimpacto = -1 THEN - COALESCE(rcp.cantidad, 0)
+        ELSE COALESCE(rcp.cantidad, 0)
+    END AS cantidad_ajustada, 
+    TO_CHAR(COALESCE(ds.total, 0), 'FM999999990.00') AS total_disponible_cisterna
+FROM 
+    test9000.depositosarticulos da
+LEFT JOIN test9000.articulos AS a ON a.id = da.articuloid
+LEFT JOIN test9000.depositos AS d ON d.id = da.depositoid
+LEFT JOIN test9000.stocklog sl ON sl.depositosarticulosid = da.id
+LEFT JOIN test9000.registrocab rc ON rc.id = sl.registrocabid
+LEFT JOIN test9000.registrocuerpo rcp ON rcp.presupcabid = rc.id
+LEFT JOIN disponible_sisterna ds ON 1=1
+WHERE 
+    d.id = $P{param_depositoid} ;]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="depositos"/>
+	</field>
+	<field name="articuloid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="articuloid"/>
+		<property name="com.jaspersoft.studio.field.label" value="articuloid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="depositosarticulos"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="disponible_articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="disponible_articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="disponible_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="depositosarticulos"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+	</field>
+	<field name="registrocabid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="registrocabid"/>
+		<property name="com.jaspersoft.studio.field.label" value="registrocabid"/>
+	</field>
+	<field name="cantidad_movimiento" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_movimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_movimiento"/>
+	</field>
+	<field name="cantidad_ajustada" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_ajustada"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_ajustada"/>
+	</field>
+	<field name="total_disponible_cisterna" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="total_disponible_cisterna"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_disponible_cisterna"/>
+	</field>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{articuloid}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="5" width="230" height="15" backcolor="#FBFFA6" uuid="d4133f08-81ed-4457-b817-f1bd0b3fe4c1">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="19c194d7-01de-4f43-8e25-3d6decc612b6"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Item]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="230" y="5" width="210" height="15" backcolor="#FBFFA6" uuid="5b4e583b-649e-4224-b4f7-bf8f3b3aab0d">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="35145bb3-92b6-453d-9dbf-1dd30c656f72"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Disponible]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<textField>
+					<reportElement x="0" y="0" width="230" height="20" uuid="1130ba19-67b8-46d8-888a-c5337eed3e5c"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="230" y="0" width="210" height="20" uuid="42f024cc-54ac-4e51-abd5-e752d50beb17"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{disponible_articulo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="ReportExecution" hyperlinkTarget="Blank">
+					<reportElement mode="Transparent" x="450" y="0" width="60" height="20" forecolor="#251DF5" backcolor="#FFFFFF" uuid="931534a2-069f-4725-9949-658df0eb774a">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#B0AEAE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font size="8" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Detalle"]]></textFieldExpression>
+					<hyperlinkParameter name="_report">
+						<hyperlinkParameterExpression><![CDATA["/Julián_Britos___Myreports/detalle_cis"]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<hyperlinkParameterExpression><![CDATA["no"]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="articuloid">
+						<hyperlinkParameterExpression><![CDATA[$F{articuloid}]]></hyperlinkParameterExpression>
+					</hyperlinkParameter>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band height="53" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="230" height="53" uuid="49b08491-7172-4002-86e9-85c7119dbec5"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22"/>
+				</textElement>
+				<text><![CDATA[CISTERNA]]></text>
+			</staticText>
+			<textField>
+				<reportElement isPrintRepeatedValues="false" mode="Opaque" x="230" y="0" width="210" height="53" backcolor="#F5B8BA" uuid="e5f1deb0-2beb-4544-a1a1-99ef0feaf954"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_disponible_cisterna}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>

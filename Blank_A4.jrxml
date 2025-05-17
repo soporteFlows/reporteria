@@ -1,0 +1,286 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="CRM_TAREA001_CONTROLjrxml" language="java" pageWidth="842" pageHeight="700" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="635aac50-3614-476c-bb66-20cc81ac2b63" ignorePagination="true">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Marcelovit"/>
+	<property name="ireport.jasperserver.url" value="http://reportes.flowsma.com:8100/reportes/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/1_CRM/CRM_TAREA001_CONTROLjrxml_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/1_CRM/CRM_TAREA001_CONTROLjrxml"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="client_id" class="java.lang.Integer"/>
+	<parameter name="status" class="java.lang.Integer"/>
+	<parameter name="fecha" class="java.util.Date"/>
+	<query language="SQL"><![CDATA[SELECT 
+    p.identificador,
+    r.referenciatexto,
+    t.id, 
+    t.Descripcion, 
+    TO_CHAR(t.fechaestimadainicio, 'YYYY-MM-DD') AS fechaestimadainicio, 
+    TO_CHAR(t.fechafin, 'YYYY-MM-DD') AS fechafin, 
+    t.hsexec,
+    t.costo,
+    t.esfuerzo,
+    t.status,
+    t.enpausa,
+    t.criticidad
+FROM test9000.tareasexec t
+INNER JOIN test9000.instructivoexec iexec ON iexec.id = t.instructivoexecid
+LEFT JOIN test9000.registrocab r ON r.id = iexec.registrocabid
+INNER JOIN test9000.perfiles p ON p.id = r.clientid
+WHERE r.flowid = 10915
+AND r.clientid = $P{client_id}  
+AND t.status = $P{status}  
+AND t.fechaestimadainicio >= $P{fecha};]]></query>
+	<field name="identificador" class="java.lang.String">
+		<description><![CDATA[un codigo de algun tipo, dni cuit, etc. que sirva para identificar univocamente al perfil si hace falta.]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="identificador"/>
+		<property name="com.jaspersoft.studio.field.label" value="identificador"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="perfiles"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechaestimadainicio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechaestimadainicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaestimadainicio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="fechafin" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechafin"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechafin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="hsexec" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="hsexec"/>
+		<property name="com.jaspersoft.studio.field.label" value="hsexec"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="costo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="costo"/>
+		<property name="com.jaspersoft.studio.field.label" value="costo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="esfuerzo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="esfuerzo"/>
+		<property name="com.jaspersoft.studio.field.label" value="esfuerzo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="status" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="enpausa" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="enpausa"/>
+		<property name="com.jaspersoft.studio.field.label" value="enpausa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<field name="criticidad" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="criticidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="criticidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tareasexec"/>
+	</field>
+	<variable name="costo" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{costo}]]></expression>
+	</variable>
+	<variable name="dias" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{esfuerzo}]]></expression>
+	</variable>
+	<variable name="horas" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{esfuerzo}]]></expression>
+	</variable>
+	<group name="referenciatexto">
+		<expression><![CDATA[$F{referenciatexto}]]></expression>
+		<groupHeader>
+			<band height="9"/>
+		</groupHeader>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="64" splitType="Stretch">
+		<element kind="textField" uuid="576b4865-ad73-4831-b9ff-fd47a1ebf495" x="0" y="0" width="800" height="30" fontSize="18.0" bold="true" italic="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{identificador}]]></expression>
+		</element>
+		<element kind="textField" uuid="2900a0c7-2daa-4855-b2ed-eb24265a9fb2" mode="Transparent" x="0" y="47" width="550" height="15" forecolor="#3170A3" backcolor="#3170A3" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<expression><![CDATA[$F{referenciatexto}]]></expression>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<pen lineWidth="1.0" lineStyle="Solid" lineColor="#3170A3"/>
+				<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</title>
+	<columnHeader height="31">
+		<element kind="staticText" uuid="97f3dcfb-569a-4214-9ab6-70594ed66df8" x="0" y="11" width="220" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Tareas]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="ee5fe7bb-4a85-4a0f-8ada-0d85c32ad68d" x="220" y="11" width="90" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Fecha]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="523f6733-387b-4180-acc8-21db23d1b658" x="310" y="11" width="90" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Fecha fin]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d9b6f940-7379-4734-beb8-e62a92427f29" x="400" y="11" width="80" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Tiempo dedicado]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d54307b5-0ed7-47f3-a272-8891d81fe8e6" x="480" y="11" width="80" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[seguimiento]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="21fec89d-d2f8-4b13-9192-9bd47d2059b6" x="560" y="11" width="100" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Costo/dolar]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="68654522-bac0-472b-a9f0-92b3f622d796" x="662" y="11" width="100" height="18" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Tiempo estimado]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="30">
+			<element kind="textField" uuid="af075f55-ec56-4e0e-a141-20f53b9f22cf" x="0" y="0" width="220" height="30" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{descripcion}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="184bff17-7eda-45f9-9776-8d35ebb62155"/>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="0d1188bd-aa52-4b42-9094-86894e4b72f9" x="220" y="0" width="90" height="30" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{fechaestimadainicio}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191c6204-0007-405d-ae0f-e05e69636596"/>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="bdfb4c2f-22c7-4665-85ea-bf68b3bccb30" x="310" y="0" width="90" height="30" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{fechafin}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee7f5dd6-9c43-41ba-81f2-2934f53c81c4"/>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="de0d7a60-d4ba-497a-9672-9d5b57b17a2e" x="400" y="0" width="80" height="30" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{hsexec}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="76d38c33-ed15-43e1-abab-6ced8f801d33"/>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="f4e55f84-4350-4a1e-b284-6f94f403bf6b" x="480" y="0" width="82" height="30" linkType="ReportExecution" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA["link"]]></expression>
+				<hyperlinkParameter name="tareaexec_id">
+					<expression><![CDATA[$F{id}]]></expression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="_report">
+					<expression><![CDATA["/1_CRM/CRM_TAREA001_SUBREPORT"]]></expression>
+				</hyperlinkParameter>
+				<hyperlinkParameter name="decorate">
+					<expression><![CDATA["no"]]></expression>
+				</hyperlinkParameter>
+			</element>
+			<element kind="textField" uuid="1341c1ff-bfa6-412b-b45a-894922d00f66" x="562" y="0" width="100" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{costo}]]></expression>
+			</element>
+			<element kind="textField" uuid="a89d82e4-a467-4234-a56e-a24c4050d98e" x="662" y="0" width="100" height="30" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{esfuerzo}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="32" splitType="Stretch">
+		<element kind="staticText" uuid="9b45f2c2-ea6c-43cc-8a6b-8ad9a8401985" x="0" y="0" width="100" height="30" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Costo Dolar]]></text>
+		</element>
+		<element kind="staticText" uuid="6ed00d11-e48b-4c65-8184-8ae54db5102b" x="100" y="0" width="100" height="30" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Horas]]></text>
+		</element>
+		<element kind="staticText" uuid="e45105af-aa3b-4f1d-b41b-98aae09fd0ff" x="200" y="0" width="100" height="30" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Dias]]></text>
+		</element>
+	</columnFooter>
+	<pageFooter height="30" splitType="Stretch">
+		<element kind="textField" uuid="56448165-54ec-47b3-8a83-cb2569f77e9a" x="0" y="0" width="100" height="30" fontSize="12.0" bold="true" hTextAlign="Center">
+			<expression><![CDATA[$V{costo}]]></expression>
+		</element>
+		<element kind="textField" uuid="b697d0ec-3640-4b42-9dcc-2a728f612bd6" x="200" y="0" width="100" height="30" fontSize="12.0" bold="true" hTextAlign="Center">
+			<expression><![CDATA[$V{horas}.divide(new java.math.BigDecimal(24), 2, java.math.RoundingMode.HALF_UP)]]></expression>
+		</element>
+		<element kind="textField" uuid="a02ed988-a9ea-431c-afd8-c2ae0c0a7651" x="100" y="0" width="100" height="30" fontSize="12.0" bold="true" hTextAlign="Center">
+			<expression><![CDATA[$V{horas}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ASIENTOS" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ec39bc6c-e120-45df-9925-72d3945b6681">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GM"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<template><![CDATA["NEW_STYLE.jrtx"]]></template>
+	<style name="ColumnHeader" mode="Opaque" forecolor="#FFFFFF" backcolor="#486666" hTextAlign="Center" vTextAlign="Middle" fontSize="15">
+		<box>
+			<topPen lineWidth="1.0"/>
+			<leftPen lineWidth="1.0"/>
+			<bottomPen lineWidth="1.0"/>
+			<rightPen lineWidth="1.0"/>
+		</box>
+	</style>
+	<style name="RowStyle">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E0E0E0"/>
+		</conditionalStyle>
+	</style>
+	<queryString>
+		<![CDATA[WITH 
+-- 1. CTE para obtener datos base SIN DUPLICADOS
+registros_base AS (
+    SELECT DISTINCT  -- ¡Clave para eliminar duplicados!
+        R.id,
+        R.descrip,
+        R.fecha,
+        R.clientname,
+        R.totalprecio,
+        R.totalimpuestos,
+        R.referenciatexto,
+        R.cuentacontableid,
+        R.flowid,
+        MAX(RC.impuestoalic) AS impuestoalic  -- Agregamos MAX para evitar duplicados en GROUP BY
+    FROM test9000.registrocab R
+    INNER JOIN test9000.registrocuerpo RC ON RC.presupcabid = R.id
+	
+    WHERE R.flowid IN (11199, 11152, 11140, 11183, 11204, 11202, 11214)
+    GROUP BY  -- Agrupamos por campos únicos de registrocab
+        R.id, R.descrip, R.fecha, R.clientname, 
+        R.totalprecio, R.totalimpuestos, R.referenciatexto, 
+        R.cuentacontableid, R.flowid
+),
+
+-- 2. CTE para clasificar operaciones
+registros_clasificados AS (
+    SELECT 
+        id,
+        fecha,
+        totalprecio,
+        totalimpuestos,
+        referenciatexto,
+        CASE 
+            WHEN flowid IN (11199, 11152) THEN 'Venta a Medida'
+            WHEN flowid = 11140 THEN 'Venta Mostrador'
+            WHEN flowid IN (11183, 11204, 11202) THEN 'Remito Salida'
+            WHEN flowid = 11214 THEN 'Compra'
+        END AS tipo_operacion,
+        CASE 
+            WHEN referenciatexto IS NOT NULL AND referenciatexto != '' THEN 'Blanco'
+            ELSE 'Negro'
+        END AS tipo_fiscal
+    FROM registros_base
+)
+
+-- 3. Consulta final para asientos (sin duplicados)
+SELECT 
+    id AS numero_asiento,
+    fecha,
+    cuenta_contable,
+    debito,
+    credito,
+    referenciatexto AS documento,
+    tipo_operacion,
+    tipo_fiscal
+FROM (
+    -- VENTAS: Clientes (Débito)
+    SELECT 
+        id,
+        fecha,
+        'Clientes (1.1.1)' AS cuenta_contable,
+        totalimpuestos AS debito,
+        0 AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion LIKE 'Venta%'
+    
+    UNION ALL
+    
+    -- VENTAS: Ingresos (Crédito)
+    SELECT 
+        id,
+        fecha,
+        'Ventas (4.1.1)' AS cuenta_contable,
+        0 AS debito,
+        totalprecio AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion LIKE 'Venta%'
+    
+    UNION ALL
+    
+    -- VENTAS: IVA (Crédito, solo Blanco)
+    SELECT 
+        id,
+        fecha,
+        'IVA Débito (2.1.1)' AS cuenta_contable,
+        0 AS debito,
+        totalimpuestos - totalprecio  AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion LIKE 'Venta%' AND tipo_fiscal = 'Blanco'
+    
+    UNION ALL
+    
+    -- COMPRAS: Mercaderías (Débito)
+    SELECT 
+        id,
+        fecha,
+        'Mercaderías (1.2.1)' AS cuenta_contable,
+        totalprecio AS debito,
+        0 AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion = 'Compra'
+    
+    UNION ALL
+    
+    -- COMPRAS: IVA Crédito (Débito, solo Blanco)
+    SELECT 
+        id,
+        fecha,
+        'IVA Crédito (2.2.1)' AS cuenta_contable,
+        totalimpuestos - totalprecio AS debito,
+        0 AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion = 'Compra' AND tipo_fiscal = 'Blanco'
+    
+    UNION ALL
+    
+    -- COMPRAS: Proveedores (Crédito)
+    SELECT 
+        id,
+        fecha,
+        'Proveedores (3.1.1)' AS cuenta_contable,
+        0 AS debito,
+         totalimpuestos AS credito,
+        referenciatexto,
+        tipo_operacion,
+        tipo_fiscal
+    FROM registros_clasificados
+    WHERE tipo_operacion = 'Compra'
+) AS asientos
+ORDER BY numero_asiento, debito DESC;]]>
+	</queryString>
+	<field name="numero_asiento" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="numero_asiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="numero_asiento"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	</field>
+	<field name="cuenta_contable" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cuenta_contable"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuenta_contable"/>
+	</field>
+	<field name="debito" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="debito"/>
+		<property name="com.jaspersoft.studio.field.label" value="debito"/>
+	</field>
+	<field name="credito" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="credito"/>
+		<property name="com.jaspersoft.studio.field.label" value="credito"/>
+	</field>
+	<field name="documento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="documento"/>
+		<property name="com.jaspersoft.studio.field.label" value="documento"/>
+	</field>
+	<field name="tipo_operacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_operacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_operacion"/>
+	</field>
+	<field name="tipo_fiscal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_fiscal"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_fiscal"/>
+	</field>
+	<group name="AsientoGroup">
+		<groupExpression><![CDATA[$F{numero_asiento}]]></groupExpression>
+		<groupHeader>
+			<band height="24">
+				<rectangle>
+					<reportElement mode="Opaque" x="0" y="0" width="802" height="24" backcolor="#FFFFFF" uuid="cff85218-0df3-42e9-9632-0ef632fda192"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineColor="#486666"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement style="RowStyle" x="0" y="0" width="100" height="24" uuid="51838800-4ce5-4d2d-9fb0-f50534f215df"/>
+					<box>
+						<topPen lineWidth="1.0" lineColor="#486666"/>
+						<leftPen lineWidth="1.0" lineColor="#486666"/>
+						<bottomPen lineWidth="1.0" lineColor="#486666"/>
+						<rightPen lineWidth="1.0" lineColor="#486666"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{numero_asiento}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="100" y="23" width="702" height="1" uuid="12459c90-0769-4864-8b51-3623e3ae0daf"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineColor="#486666"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="5">
+				<line>
+					<reportElement x="0" y="4" width="802" height="1" uuid="2848d9e9-f01b-4e39-8231-e2d6c26168e2"/>
+					<graphicElement>
+						<pen lineWidth="1.0" lineColor="#486666"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement style="ColumnHeader" x="0" y="5" width="100" height="30" uuid="aad43376-b23c-4a2d-9451-b2811956f8ba"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Numero de asiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="100" y="5" width="100" height="30" uuid="ce191970-e060-4017-9443-507c956c79ea"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="200" y="5" width="100" height="30" uuid="8eea0d12-228e-42df-9aba-8084a9dca603"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CTE CTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="300" y="5" width="100" height="30" uuid="beb9916f-8eca-4ebf-97e3-20c6dd24116e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[DEBE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="400" y="5" width="100" height="30" uuid="acce3021-3613-4969-87a2-361bacea17c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[HABER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="500" y="5" width="100" height="30" uuid="bfd010f9-2d76-48c4-8dbf-ee390d8d730b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Documento ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="600" y="5" width="100" height="30" uuid="48aa56d6-a81e-4907-9774-933fdb336afa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="ColumnHeader" x="700" y="5" width="100" height="30" uuid="e804a82c-04bd-4aee-bf11-5f55a7f936fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Fiscal]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="802" height="24" backcolor="#FFFFFF" uuid="4cccefff-e861-448d-b66e-b0ae89e91422"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineColor="#486666"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement style="RowStyle" x="100" y="5" width="100" height="19" uuid="72a728c6-d232-4aee-938c-e4ae965b3c4d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="200" y="5" width="100" height="19" uuid="82fd4e0a-3743-4364-8b64-0a8b084ad659"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cuenta_contable}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="300" y="5" width="100" height="19" uuid="076f769c-824a-433e-91cb-7743c651da85"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{debito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="400" y="5" width="100" height="19" uuid="23f69460-7f0f-4446-887c-ea715b35bb2a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="500" y="5" width="100" height="19" uuid="ca07c224-bca8-4f7f-8a6d-0296f8379eff"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="600" y="5" width="100" height="19" uuid="4d3f29dd-19eb-4fb5-8917-f1ba403082d7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tipo_operacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="700" y="5" width="100" height="19" uuid="c1c1c6c9-9a02-49e2-b692-652e1f2169c7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tipo_fiscal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RemitoVSCompras" pageWidth="1180" pageHeight="595" orientation="Landscape" columnWidth="1140" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="677c15d5-e878-4205-8890-37d04f7cb79a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<style name="RowStyle">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E0E0E0"/>
+		</conditionalStyle>
+	</style>
+	<style name="RowStyle_Completo">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E0E0E0"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$P{tipo}.equals("todo")]]></conditionExpression>
+			<style>
+				<box>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="tipo" class="java.lang.String">
+		<defaultValueExpression><![CDATA["todo"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fechaDesde" class="java.sql.Date"/>
+	<parameter name="fechaHasta" class="java.sql.Date"/>
+	<parameter name="codigoInterno" class="java.lang.String"/>
+	<parameter name="patente" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    A.internalcode AS codigo_interno,
+    A.nombre AS nombre_articulo,
+    C.clientname AS Proveedor,
+    C.descrip AS Patente,
+	C.notas as Notas,
+	C.fecha as FECHAFILTRO,
+	RC.cantidad AS Cantidad,
+    RC.preciounit AS Precio_unitario,
+    RC.preciototal AS Precio_total,
+
+    CASE 
+        WHEN $P{tipo} IN ('compras', 'todo') THEN MAX(C.fecha)
+        ELSE NULL 
+    END AS ultima_fecha_compra,
+
+    CASE 
+        WHEN $P{tipo} IN ('compras', 'todo') THEN STRING_AGG(DISTINCT C.referenciatexto, ', ')
+        ELSE NULL 
+    END AS referencias_compra,
+
+    CASE 
+        WHEN $P{tipo} IN ('compras', 'todo') THEN SUM(RC.cantidad)
+        ELSE NULL 
+    END AS cantidad_total_compra,
+
+    CASE 
+        WHEN $P{tipo} IN ('remitos', 'todo') THEN (
+            SELECT MAX(R2.fecha)
+            FROM test9000.registrocab R2
+            JOIN test9000.registrocuerpo RR2 ON RR2.presupcabid = R2.id
+            JOIN test9000.depositosarticulos DA2 ON DA2.id = RR2.articulodepositoid
+            WHERE DA2.articuloid = A.id AND R2.flowid IN (11016, 11015, 11017)
+        )
+        ELSE NULL 
+    END AS ultima_fecha_remito,
+
+    CASE 
+        WHEN $P{tipo} IN ('remitos', 'todo') THEN (
+            SELECT STRING_AGG(DISTINCT R2.referenciatexto, ', ')
+            FROM test9000.registrocab R2
+            JOIN test9000.registrocuerpo RR2 ON RR2.presupcabid = R2.id
+            JOIN test9000.depositosarticulos DA2 ON DA2.id = RR2.articulodepositoid
+            WHERE DA2.articuloid = A.id AND R2.flowid IN (11016, 11015, 11017)
+        )
+        ELSE NULL 
+    END AS referencias_remito,
+
+    CASE 
+        WHEN $P{tipo} IN ('remitos', 'todo') THEN (
+            SELECT SUM(RR2.cantidad)
+            FROM test9000.registrocab R2
+            JOIN test9000.registrocuerpo RR2 ON RR2.presupcabid = R2.id
+            JOIN test9000.depositosarticulos DA2 ON DA2.id = RR2.articulodepositoid
+            WHERE DA2.articuloid = A.id AND R2.flowid IN (11016, 11015, 11017)
+        )
+        ELSE NULL 
+    END AS cantidad_total_remito,
+
+    CASE 
+        WHEN $P{tipo} = 'todo' THEN (
+            SUM(RC.cantidad) - 
+            (
+                SELECT COALESCE(SUM(RR2.cantidad), 0)
+                FROM test9000.registrocab R2
+                JOIN test9000.registrocuerpo RR2 ON RR2.presupcabid = R2.id
+                JOIN test9000.depositosarticulos DA2 ON DA2.id = RR2.articulodepositoid
+                WHERE DA2.articuloid = A.id AND R2.flowid IN (11016, 11015, 11017)
+            )
+        )
+        ELSE NULL 
+    END AS diferencia_cantidad
+
+FROM 
+    test9000.articulos A
+    JOIN test9000.depositosarticulos DA ON DA.articuloid = A.id
+    JOIN test9000.registrocuerpo RC ON RC.articulodepositoid = DA.id
+    JOIN test9000.registrocab C ON C.id = RC.presupcabid AND C.flowid = 11013
+WHERE
+    (
+        -- Caso 1: Si el usuario ingresa solo una fecha, filtra solo ese día
+        COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = C.fecha
+        
+        -- Caso 2: Si el usuario ingresa ambas fechas, filtra el rango completo
+        OR C.fecha BETWEEN 
+            COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '1 month') 
+            AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    )
+     -- Filtro por código interno (insensible a mayúsculas/minúsculas)
+    AND ($P{codigoInterno} IS NULL OR UPPER(A.internalcode) LIKE '%' || UPPER($P{codigoInterno}) || '%')
+    -- Filtro por patente/descrip (insensible a mayúsculas/minúsculas)
+    AND ($P{patente} IS NULL OR UPPER(C.descrip) LIKE '%' || UPPER($P{patente}) || '%')
+    -- Filtro por cliente (insensible a mayúsculas/minúsculas)
+  	AND ($P{proveedor} IS NULL OR UPPER(C.clientname) LIKE '%' || UPPER($P{proveedor}) || '%')
+
+GROUP BY
+    A.internalcode,
+    C.clientname,
+    C.descrip ,
+	C.notas ,
+	C.fecha,
+	RC.cantidad ,
+    RC.preciounit ,
+    RC.preciototal ,
+    A.nombre,
+    A.id
+
+ORDER BY
+    C.fecha DESC]]>
+	</queryString>
+	<field name="codigo_interno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_interno"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_interno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="nombre_articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_articulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulos"/>
+	</field>
+	<field name="proveedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="proveedor"/>
+		<property name="com.jaspersoft.studio.field.label" value="proveedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="patente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="patente"/>
+		<property name="com.jaspersoft.studio.field.label" value="patente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="notas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="notas"/>
+		<property name="com.jaspersoft.studio.field.label" value="notas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+		<fieldDescription><![CDATA[son las que ve el cliente, a los campos que empiezan con Obs no los ve.]]></fieldDescription>
+	</field>
+	<field name="fechafiltro" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fechafiltro"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechafiltro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="cantidad" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="precio_unitario" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="precio_unitario"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_unitario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="precio_total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="precio_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio_total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocuerpo"/>
+	</field>
+	<field name="ultima_fecha_compra" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ultima_fecha_compra"/>
+		<property name="com.jaspersoft.studio.field.label" value="ultima_fecha_compra"/>
+	</field>
+	<field name="referencias_compra" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencias_compra"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencias_compra"/>
+	</field>
+	<field name="cantidad_total_compra" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_total_compra"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_total_compra"/>
+	</field>
+	<field name="ultima_fecha_remito" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ultima_fecha_remito"/>
+		<property name="com.jaspersoft.studio.field.label" value="ultima_fecha_remito"/>
+	</field>
+	<field name="referencias_remito" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencias_remito"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencias_remito"/>
+	</field>
+	<field name="cantidad_total_remito" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="cantidad_total_remito"/>
+		<property name="com.jaspersoft.studio.field.label" value="cantidad_total_remito"/>
+	</field>
+	<field name="diferencia_cantidad" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="diferencia_cantidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="diferencia_cantidad"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="9" width="1138" height="30" forecolor="#486666" uuid="6e02dc1d-2260-41f4-8b9e-fa9053bebcd3"/>
+				<box>
+					<pen lineWidth="1.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REPORTE " + 
+($P{tipo} != null ? 
+    ($P{tipo}.equals("compras") ? "DE COMPRAS" : 
+     $P{tipo}.equals("remitos") ? "DE REMITOS" : "") 
+: "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="150" y="3" width="90" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="e5cf9ee6-35a6-4a61-b802-cb3c84b6806d"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Decripcion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="3" width="150" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="2f790f36-6bea-4fa7-a2e4-05e6ddb5597a"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Articulo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="240" y="3" width="99" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="503c4c69-05ac-4ef3-85fc-3296a30ec46c"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="339" y="3" width="99" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="3f745dba-3af6-43ed-8b8c-3d6b87fbb8b1"/>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Notas]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="438" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="b55ce86c-142d-4d9e-aeb9-a924ae4899f0"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{tipo}.equals("compras") || $P{tipo}.equals("todo"))? "Fecha de Compra":"Fecha del Remito"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="538" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="c3caf304-2e11-4b55-97f0-af1f18788986"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{tipo}.equals("compras") || $P{tipo}.equals("todo"))? "Cantidad Compra":"Cantidad Remito"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="838" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="7bf9cacb-a6f6-424c-9e03-ee2200e54ca8">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha del Remito"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="938" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="7363486f-71b9-4ba2-a21f-26c1c863fc6c">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cantidad Remito"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="638" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="d3c6c079-b66e-49be-a960-aedd05ac990c"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio unitario"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="738" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="f8811b26-ffd1-412c-804d-0fad0d4a8d7a"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Precio Total"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="1038" y="3" width="100" height="26" forecolor="#FFFFFF" backcolor="#486666" uuid="be80c8a9-00b7-447e-805b-630ad5834189">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Diferencia"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="RowStyle" x="0" y="2" width="150" height="18" uuid="e3d39c95-cbd1-450d-89f9-24d80c694b04"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_articulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="150" y="2" width="90" height="18" uuid="2f6e86bf-b402-4be4-9c88-fd94812c501f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{patente} == null || $F{patente}.isEmpty()) ? "-" : $F{patente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="240" y="2" width="99" height="18" uuid="2fffa253-573b-4af3-b3df-cef1caa7d69d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{proveedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="339" y="2" width="99" height="18" uuid="512d2c24-dab2-4e5b-abf8-aca1a4c3ec93"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{notas} == null || $F{notas}.isEmpty()) ? "-" : $F{notas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM d, yyyy">
+				<reportElement style="RowStyle" x="438" y="2" width="100" height="18" uuid="150e27cf-50fa-445f-b208-0f20d7b4fab9"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{tipo}.equals("compras") || $P{tipo}.equals("todo"))? $F{ultima_fecha_compra}:$F{ultima_fecha_remito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="538" y="2" width="100" height="18" uuid="f5d55068-e466-41b4-afcd-9267b329dab5"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{tipo}.equals("compras") || $P{tipo}.equals("todo"))? $F{cantidad_total_compra}:$F{cantidad_total_remito}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement style="RowStyle" x="654" y="2" width="84" height="18" uuid="ba17cf16-c49e-4a1b-b61e-1b27c248628d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_unitario}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement style="RowStyle_Completo" x="754" y="2" width="84" height="18" isRemoveLineWhenBlank="true" uuid="860dc68c-305e-4275-b716-1a81f74a00bd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="938" y="2" width="100" height="18" uuid="c59f6dca-4922-4e13-acce-7f9f403a4a6d">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad_total_remito}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM d, yyyy">
+				<reportElement style="RowStyle" x="838" y="2" width="100" height="18" uuid="6960c8c9-2a90-4326-a8ac-76218324e0cd">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ultima_fecha_remito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="1038" y="2" width="100" height="18" uuid="c2a204ea-574a-4821-93ab-6d892694d523">
+					<printWhenExpression><![CDATA[$P{tipo}.equals("todo")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diferencia_cantidad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="RowStyle" x="738" y="2" width="16" height="18" uuid="ca4629f2-b353-4749-b281-3740da148c13"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[$
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="RowStyle" x="638" y="2" width="16" height="18" uuid="53c08d4d-d20f-43fd-8973-ec5787bb8a52"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[$
+]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

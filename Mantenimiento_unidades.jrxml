@@ -1,0 +1,178 @@
+<!-- Created with Jaspersoft Studio version 6.21.3 using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf -->
+<jasperReport name="mantenimiento_unidades" language="java" pageWidth="1050" pageHeight="842" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e572bfb1-e279-436f-9de1-52d1139e982b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<query language="SQL"><![CDATA[select 
+r.id,
+r.descrip,
+r.fecha, 
+r.fechacompromiso,
+r.creationdate,
+r.clientname ,
+r.notas, 
+r.referenciatexto,
+r.varcn1  as km, 
+r.varcn2 as hs,
+s.descrip as status
+from test9000.registrocab r
+inner join test9000.statusflows sf on sf.id = r.statusflowid
+inner join test9000.statuses s on s.id = sf.statusid 
+where flowid in (10985,10980,10986)
+order by  r.descrip,r.flowid]]></query>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="descrip" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<description><![CDATA[la fecha del presupuesto]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fechacompromiso" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="creationdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="creationdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="creationdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientname" class="java.lang.String">
+		<description><![CDATA[estos e usa cuando son prospectos, o sea que no hay un clientid]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="notas" class="java.lang.String">
+		<description><![CDATA[son las que ve el cliente, a los campos que empiezan con Obs no los ve.]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="notas"/>
+		<property name="com.jaspersoft.studio.field.label" value="notas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="km" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="km"/>
+		<property name="com.jaspersoft.studio.field.label" value="km"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="hs" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="hs"/>
+		<property name="com.jaspersoft.studio.field.label" value="hs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="status"/>
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statuses"/>
+	</field>
+	<group name="Unidad">
+		<expression><![CDATA[$F{descrip}]]></expression>
+		<groupHeader>
+			<band height="26">
+				<element kind="textField" uuid="9c19467d-ffa3-4f52-be8e-203e58120b08" mode="Opaque" x="0" y="3" width="1008" height="23" forecolor="#FFFFFF" backcolor="#4D48DB" hTextAlign="Left" vTextAlign="Middle">
+					<paragraph leftIndent="10"/>
+					<expression><![CDATA[$F{descrip}]]></expression>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</element>
+			</band>
+		</groupHeader>
+	</group>
+	<background height="79" splitType="Stretch"/>
+	<title height="49" splitType="Stretch">
+		<element kind="staticText" uuid="f47a78aa-af98-4f17-a736-6752c910f207" x="0" y="0" width="959" height="30" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Mantenimiento por patente]]></text>
+		</element>
+	</title>
+	<columnHeader height="25">
+		<element kind="staticText" uuid="5dc3ea67-9d30-4460-be54-8e27628fcc34" x="0" y="1" width="279" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Descripcion ]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="220d7a27-8190-4d6e-8ab5-937c1e6ecd3e" x="280" y="1" width="94" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Fecha]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="1543f749-28a6-4242-ae4b-d53ee8b37af3" x="374" y="1" width="116" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Fecha compromiso]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="0f0a6f81-2563-4a8d-89bb-69ed0ddfa57f" x="490" y="1" width="150" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Proveedor]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="8c95a32e-e49d-43cc-be74-9bd9ff91a9f4" x="640" y="1" width="100" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Km]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="fdb181fe-eb1f-443d-b2f6-7ddcd07c7e21" x="790" y="1" width="218" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Status]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+		<element kind="staticText" uuid="0809cb11-f4ff-4ff6-a15b-2c70bc8f7eff" x="740" y="1" width="50" height="19" hTextAlign="Left">
+			<paragraph leftIndent="10"/>
+			<text><![CDATA[Hs]]></text>
+			<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<element kind="textField" uuid="39f9530d-6f50-4207-878d-f63cf2bbffaa" x="0" y="4" width="290" height="30" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{referenciatexto}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08b6a378-0fc1-4db3-8fa9-d85d3669b3fc"/>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="1155a5f4-d590-44f3-883d-061796840506" x="290" y="5" width="100" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{fecha}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="7ce77b17-4997-482a-8360-649d2f5b3aec" x="490" y="5" width="150" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{clientname}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="99fbd5ad-ef89-421d-bc92-1fc04a5fb388" x="789" y="5" width="220" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{status}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="aede9413-628d-4bc2-bc2e-0b612eda8a45" x="640" y="5" width="100" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{km}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="ac549db7-0e52-47f1-8703-637443a92abd" x="390" y="5" width="100" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{fechacompromiso}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+			<element kind="textField" uuid="b2d339ab-b156-4a11-b437-adc039b9177c" x="740" y="5" width="48" height="30" hTextAlign="Left" vTextAlign="Middle">
+				<paragraph leftIndent="10"/>
+				<expression><![CDATA[$F{hs}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

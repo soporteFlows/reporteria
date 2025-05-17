@@ -1,0 +1,578 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Reporte03" language="java" printOrder="Horizontal" pageWidth="1191" pageHeight="842" orientation="Landscape" columnWidth="1151" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7281be54-c1f2-4e8d-bca1-bebcb64ff709">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://reportes.flowsma.com:8100/reportes/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/2_DON_ANDRES/MANTENIMIENTO/MAN003a_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/2_DON_ANDRES/MANTENIMIENTO/MAN003a"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="207"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="786"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.report.unit.description" value="Reporte de registro de mantenimientos con parámetros de estado y de secuencia. "/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<parameter name="param_secid" class="java.lang.Integer"/>
+	<parameter name="param_estadoid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT 
+test9000.registrocab.descrip, 
+test9000.registrocab.fecha, 
+test9000.registrocab.fechacompromiso, 
+test9000.registrocab.clientid,
+test9000.registrocab.clientname, 
+test9000.registrocab.vendedorid, 
+test9000.registrocab.notas,  
+test9000.registrocab.calidadfinal ,
+test9000.registrocab.obsventas, 
+test9000.registrocab.obsadm, 
+test9000.registrocab.obsoo, 
+test9000.registrocab.referenciatexto, 
+test9000.registrocab.responsableactactualid, 
+test9000.registrocab.flowid,  
+test9000.registrocab.id,  
+test9000.registrocab.statusflowid ,
+test9000.categorias.name AS macroproceso ,
+SF.categid AS macroprocesoid , 
+SF.id as sfid,
+VE.identificador AS vendedor,
+RA.identificador AS respactual,
+ES.descrip AS estado, 
+ES.id AS estadoid,
+SE.codigolistregistro , 
+SE.categoria as secmacro ,
+N.valor, 
+N.secuenciaid
+FROM test9000.registrocab 
+INNER JOIN test9000.registrocabseq N ON N.registrocabid = test9000.registrocab.id
+INNER JOIN  test9000.secuencias SE ON  N.secuenciaid =  SE.id 
+LEFT JOIN test9000.perfiles VE ON test9000.registrocab.vendedorid = VE.id
+LEFT JOIN test9000.perfiles RA ON test9000.registrocab.responsableactactualid = RA.id
+INNER JOIN test9000.statusflows SF ON test9000.registrocab.statusflowid = SF.id
+INNER JOIN test9000.statuses ES ON SF.statusid = ES.id
+INNER JOIN test9000.categorias ON  SF.categid =  test9000.categorias.id 
+
+
+WHERE SE.id= $P{param_secid}   and (SF.tipo =  $P{param_estadoid}  or SF.tipo = $P{param_estadoid}   +1 )
+ORDER BY  estado desc]]></query>
+	<field name="descrip" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<description><![CDATA[la fecha del presupuesto]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fechacompromiso" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientid" class="java.lang.Long">
+		<description><![CDATA[este id va a estar vacio si el cliente es nuevo o es un prospecto solamente.]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="clientid"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientname" class="java.lang.String">
+		<description><![CDATA[estos e usa cuando son prospectos, o sea que no hay un clientid]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="vendedorid" class="java.lang.Long">
+		<description><![CDATA[el id del usuario autenticado al momento de la carga]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="vendedorid"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendedorid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="notas" class="java.lang.String">
+		<description><![CDATA[son las que ve el cliente, a los campos que empiezan con Obs no los ve.]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="notas"/>
+		<property name="com.jaspersoft.studio.field.label" value="notas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="calidadfinal" class="java.lang.Long">
+		<description><![CDATA[es un FK a categorias que usa la categoria del grupo CALIDADFINAL]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="calidadfinal"/>
+		<property name="com.jaspersoft.studio.field.label" value="calidadfinal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="obsventas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obsventas"/>
+		<property name="com.jaspersoft.studio.field.label" value="obsventas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="obsadm" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obsadm"/>
+		<property name="com.jaspersoft.studio.field.label" value="obsadm"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="obsoo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obsoo"/>
+		<property name="com.jaspersoft.studio.field.label" value="obsoo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="referenciatexto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.label" value="referenciatexto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="responsableactactualid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="responsableactactualid"/>
+		<property name="com.jaspersoft.studio.field.label" value="responsableactactualid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="flowid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="flowid"/>
+		<property name="com.jaspersoft.studio.field.label" value="flowid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="statusflowid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="statusflowid"/>
+		<property name="com.jaspersoft.studio.field.label" value="statusflowid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="macroproceso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="macroproceso"/>
+		<property name="com.jaspersoft.studio.field.label" value="macroproceso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categorias"/>
+	</field>
+	<field name="macroprocesoid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="macroprocesoid"/>
+		<property name="com.jaspersoft.studio.field.label" value="macroprocesoid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statusflows"/>
+	</field>
+	<field name="sfid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="sfid"/>
+		<property name="com.jaspersoft.studio.field.label" value="sfid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statusflows"/>
+	</field>
+	<field name="vendedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vendedor"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendedor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="perfiles"/>
+	</field>
+	<field name="respactual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="respactual"/>
+		<property name="com.jaspersoft.studio.field.label" value="respactual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="perfiles"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statuses"/>
+	</field>
+	<field name="estadoid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="estadoid"/>
+		<property name="com.jaspersoft.studio.field.label" value="estadoid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="statuses"/>
+	</field>
+	<field name="codigolistregistro" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigolistregistro"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigolistregistro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="secuencias"/>
+	</field>
+	<field name="secmacro" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="secmacro"/>
+		<property name="com.jaspersoft.studio.field.label" value="secmacro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="secuencias"/>
+	</field>
+	<field name="valor" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="valor"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocabseq"/>
+	</field>
+	<field name="secuenciaid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="secuenciaid"/>
+		<property name="com.jaspersoft.studio.field.label" value="secuenciaid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocabseq"/>
+	</field>
+	<group name="macro">
+		<expression><![CDATA[$F{estado}]]></expression>
+		<groupHeader>
+			<band height="40">
+				<element kind="textField" uuid="847b2b04-c138-4a0b-b9f7-2e8e906afa65" x="0" y="10" width="1151" height="20" forecolor="#04801F" fontSize="14.0" bold="true" italic="true" hTextAlign="Left" vTextAlign="Middle">
+					<expression><![CDATA[$F{estado}]]></expression>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="33003e09-77a1-4019-afbe-5e340a29dd1f" x="1155" y="10" width="49" height="10" forecolor="#8F8D8D" fontName="Times New Roman" fontSize="7.0" italic="true" hTextAlign="Left" vTextAlign="Middle">
+					<expression><![CDATA["F"+$F{secmacro}]]></expression>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</element>
+				<element kind="textField" uuid="bfae4707-e673-4ec1-ae0a-c6ab80fe85a1" x="1155" y="20" width="49" height="10" forecolor="#8F8D8D" fontName="Times New Roman" fontSize="7.0" italic="true" hTextAlign="Left" vTextAlign="Middle">
+					<expression><![CDATA["SF"+$F{sfid}]]></expression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group1">
+		<expression><![CDATA[$F{estado}]]></expression>
+		<groupHeader>
+			<band height="25">
+				<element kind="textField" uuid="41d92a08-96ec-4f37-87cc-8417e2ba292e" mode="Opaque" x="1160" y="5" width="30" height="20" forecolor="#251DF5" backcolor="#F2F0F0" fontSize="8.0" textAdjust="StretchHeight" linkType="ReportExecution" linkTarget="Blank" italic="true" underline="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA["form"]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8c3cca40-f570-4196-ad65-8a7b8faf107c"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#C2BEBE"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#C2BEBE"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#C2BEBE"/>
+					</box>
+					<hyperlinkParameter name="_report">
+						<expression><![CDATA["/reports/subreportes/doc999"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<expression><![CDATA["no"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="param_statusid">
+						<expression><![CDATA[$F{estadoid}]]></expression>
+					</hyperlinkParameter>
+				</element>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="CABID">
+		<expression><![CDATA[$F{id}]]></expression>
+		<groupHeader>
+			<band height="25">
+				<element kind="textField" uuid="33d18b88-e4de-49d4-a0d7-a348eab522fa" stretchType="ContainerHeight" x="60" y="0" width="60" height="20" fontSize="8.0" textAdjust="ScaleFont" pattern="dd/MM/yyyy" linkTarget="Blank" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{fecha}]]></expression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="ef9a7a4f-0c02-46fa-98ff-74ff7f45d431" stretchType="ContainerHeight" x="490" y="0" width="80" height="20" fontSize="8.0" textAdjust="ScaleFont" linkTarget="Blank" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{vendedor}]]></expression>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="125248be-08de-4e7d-906c-af1de3f37226" stretchType="ContainerHeight" x="240" y="0" width="250" height="20" fontSize="8.0" textAdjust="ScaleFont" linkTarget="Blank" hTextAlign="Left" vTextAlign="Middle">
+					<expression><![CDATA[$F{referenciatexto}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6d7ba24-0574-4d86-a059-aec124ad0017"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="51b83c92-8880-4dea-ad92-153d5b266f07" stretchType="ContainerHeight" x="985" y="0" width="46" height="20" forecolor="#251DF5" fontSize="8.0" textAdjust="ScaleFont" linkType="ReportExecution" linkTarget="Blank" underline="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA["TRZ"]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8c3cca40-f570-4196-ad65-8a7b8faf107c"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<hyperlinkParameter name="_report">
+						<expression><![CDATA["/reports/subreportes/trazabilidad"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<expression><![CDATA["no"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="param_registrocabid">
+						<expression><![CDATA[$F{id}]]></expression>
+					</hyperlinkParameter>
+				</element>
+				<element kind="textField" uuid="d9df8ff2-03f3-48b1-bb81-c8dbdc9caeb9" stretchType="ContainerHeight" x="650" y="0" width="150" height="20" fontSize="8.0" textAdjust="ScaleFont" linkTarget="Blank" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{clientname}]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6d7ba24-0574-4d86-a059-aec124ad0017"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="3f3db575-964e-4f52-b7ca-b6673b284544" stretchType="ContainerHeight" x="570" y="0" width="80" height="20" fontSize="8.0" textAdjust="StretchHeight" linkTarget="Blank" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{respactual}]]></expression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="36529267-65e9-43a6-beb4-6bc3760b561d" mode="Transparent" x="800" y="0" width="60" height="20" forecolor="#251DF5" backcolor="#FFFFFF" markup="none" fontSize="8.0" textAdjust="StretchHeight" linkType="ReportExecution" linkTarget="Blank" blankWhenNull="true" underline="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA["Detalle"]]></expression>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<box>
+						<pen lineColor="#B0AEAE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<hyperlinkParameter name="_report">
+						<expression><![CDATA["https://www.google.com"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<expression><![CDATA["no"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="Id">
+						<expression><![CDATA[$F{id}]]></expression>
+					</hyperlinkParameter>
+				</element>
+				<element kind="textField" uuid="799a48aa-5f7f-485e-911a-647ef75fabd5" x="860" y="0" width="65" height="20" forecolor="#251DF5" fontSize="8.0" textAdjust="StretchHeight" linkType="ReportExecution" linkTarget="Blank" underline="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA["Depende de"]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8c3cca40-f570-4196-ad65-8a7b8faf107c"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#B0AEAE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<hyperlinkParameter name="_report">
+						<expression><![CDATA["/reports/subreportes/GEN697"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<expression><![CDATA["no"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="param_rcabid">
+						<expression><![CDATA[$F{id}]]></expression>
+					</hyperlinkParameter>
+				</element>
+				<element kind="textField" uuid="c0707307-fe9a-4aee-a9e9-f7f17473f6c5" stretchType="ContainerHeight" x="0" y="0" width="60" height="20" fontSize="8.0" textAdjust="ScaleFont" pattern="dd/MM/yyyy" linkTarget="Blank" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{fechacompromiso}]]></expression>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="73441fd5-dcd7-45ee-9dcb-b56da5dc0f25" stretchType="ContainerHeight" x="120" y="0" width="60" height="20" fontSize="8.0" textAdjust="ScaleFont" linkTarget="Blank" blankWhenNull="true" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{valor}]]></expression>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+				<element kind="textField" uuid="7c30de9a-54d9-40bf-9d94-6c1190c5355e" x="925" y="0" width="60" height="20" forecolor="#251DF5" fontSize="8.0" textAdjust="StretchHeight" linkType="ReportExecution" linkTarget="Blank" underline="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA["Asiste a"]]></expression>
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8c3cca40-f570-4196-ad65-8a7b8faf107c"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#B0AEAE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<hyperlinkParameter name="_report">
+						<expression><![CDATA["/reports/subreportes/GEN696"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="decorate">
+						<expression><![CDATA["no"]]></expression>
+					</hyperlinkParameter>
+					<hyperlinkParameter name="param_rcabid">
+						<expression><![CDATA[$F{id}]]></expression>
+					</hyperlinkParameter>
+				</element>
+				<element kind="textField" uuid="60629ce3-2583-466c-b494-4a0f622758f2" stretchType="ContainerHeight" x="180" y="0" width="60" height="20" fontSize="8.0" textAdjust="ScaleFont" linkTarget="Blank" blankWhenNull="true" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<expression><![CDATA[$F{descrip}]]></expression>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<box>
+						<pen lineColor="#C2BEBE"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+				</element>
+			</band>
+		</groupHeader>
+	</group>
+	<background splitType="Stretch"/>
+	<columnHeader height="75" splitType="Stretch">
+		<element kind="staticText" uuid="4c899037-485a-498b-b256-a2b754070af0" mode="Opaque" x="60" y="40" width="60" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Fecha]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="6822afd2-2321-4cc7-a411-9fcb75cbda32" mode="Opaque" x="490" y="40" width="80" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Responsable seguimiento]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="df2866ba-170b-4fe9-a14f-7134811506e8" mode="Opaque" x="985" y="40" width="46" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Traza]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="130550ca-065e-4f4c-9a32-300979fbaee7" mode="Opaque" x="120" y="40" width="60" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[OT]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="b999f034-4391-4d45-9df8-13e11a7b1f39" mode="Opaque" x="570" y="40" width="80" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Responsable actual]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="0afb9a49-d5ab-4eb5-b81a-82aad09dd7e2" mode="Opaque" x="650" y="40" width="150" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[PROVEEDOR]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="2f4942dd-d10e-4164-a267-4828ca241a1a" mode="Opaque" x="800" y="40" width="60" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Cuerpo del registro]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="3c3ebab4-6ff9-48d6-a6df-71e6ec328c77" mode="Opaque" x="240" y="40" width="250" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Referencia]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="585824ab-5fb9-4cd4-ae25-66da74aab7ea" mode="Opaque" x="860" y="40" width="125" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Registro relacionado]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="textField" uuid="92ef107f-0c2f-40cb-9fa9-f55facfa1ea3" x="0" y="15" width="1151" height="20" forecolor="#04801F" fontSize="14.0" bold="true" italic="true" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{codigolistregistro}]]></expression>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<pen lineWidth="1.5" lineColor="#04801F"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="28ced59d-81c9-4270-a731-8298b602068b" mode="Opaque" x="0" y="40" width="60" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Fecha compromiso]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="1b2b35a2-ec63-470e-9bdb-8fa6911838dc" mode="Opaque" x="180" y="40" width="60" height="30" forecolor="#FFFFFF" backcolor="#04801F" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Patente]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box>
+				<leftPen lineWidth="1.0"/>
+			</box>
+		</element>
+	</columnHeader>
+	<pageFooter height="30" splitType="Stretch">
+		<element kind="textField" uuid="f60a2ecd-3590-49af-9774-9cecf4c6adbc" x="480" y="10" width="100" height="20" hTextAlign="Right">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="ce2b2c1c-0350-40ea-a9f9-fb3b7f6e87fa" x="580" y="10" width="100" height="20" evaluationTime="Report" hTextAlign="Left">
+			<expression><![CDATA[" of " + $V{PAGE_NUMBER}]]></expression>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+	</pageFooter>
+	<noData height="60">
+		<element kind="staticText" uuid="1a0c00ce-d827-49c8-ba6d-25c0f79023b2" x="440" y="15" width="300" height="30" forecolor="#FC082C" fontSize="19.0" italic="true" hTextAlign="Center">
+			<text><![CDATA[No hay datos para mostrar]]></text>
+		</element>
+	</noData>
+</jasperReport>

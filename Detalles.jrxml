@@ -1,0 +1,220 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="Blank_A4_1" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="be89f323-7bf3-4508-a440-dd4813e74d1c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="donandres"/>
+	<parameter name="secuencia" class="java.lang.Integer"/>
+	<query language="SQL"><![CDATA[SELECT 
+TO_CHAR(r.fecha, 'DD-MM-YYYY') as fecha,
+TO_CHAR(r.fechacompromiso, 'DD-MM-YYYY') as fechacompromiso,
+r.descrip,
+r.vendedorid,
+r.responsableactactualid,
+r.clientname,
+r.notas,
+r.obsactuar,
+r.varcn1 as km,
+r.varcn2 as hrs
+FROM test9000.registrocab r
+WHERE r.id = 7055]]></query>
+	<field name="fecha" class="java.lang.String">
+		<description><![CDATA[la fecha del presupuesto]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fechacompromiso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechacompromiso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="descrip" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrip"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="vendedorid" class="java.lang.Long">
+		<description><![CDATA[el id del usuario autenticado al momento de la carga]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="vendedorid"/>
+		<property name="com.jaspersoft.studio.field.label" value="vendedorid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="responsableactactualid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="responsableactactualid"/>
+		<property name="com.jaspersoft.studio.field.label" value="responsableactactualid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="clientname" class="java.lang.String">
+		<description><![CDATA[estos e usa cuando son prospectos, o sea que no hay un clientid]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.label" value="clientname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="notas" class="java.lang.String">
+		<description><![CDATA[son las que ve el cliente, a los campos que empiezan con Obs no los ve.]]></description>
+		<property name="com.jaspersoft.studio.field.name" value="notas"/>
+		<property name="com.jaspersoft.studio.field.label" value="notas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="obsactuar" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="obsactuar"/>
+		<property name="com.jaspersoft.studio.field.label" value="obsactuar"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="km" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="km"/>
+		<property name="com.jaspersoft.studio.field.label" value="km"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="hrs" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="hrs"/>
+		<property name="com.jaspersoft.studio.field.label" value="hrs"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="46" splitType="Stretch">
+		<element kind="staticText" uuid="8672bc51-1f77-4d17-b422-37ac7ee4587b" x="0" y="16" width="555" height="30" fontName="Roboto Black" fontSize="19.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[DETALLES]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box>
+				<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+	</title>
+	<pageHeader height="72" splitType="Stretch">
+		<element kind="staticText" uuid="1966fce8-be2e-4601-94eb-c17b548e7040" mode="Opaque" x="0" y="12" width="140" height="30" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="16.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[UNIDAD
+]]></text>
+			<box>
+				<pen lineColor="#121212"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="5f73e9ee-d986-4b15-ba15-7f78ed13aef6" mode="Opaque" x="0" y="42" width="140" height="30" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="13.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[FECHA INGRESO
+]]></text>
+			<box>
+				<pen lineColor="#121212"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="6f314279-03fa-4c36-983e-ffb3d045aef1" mode="Opaque" x="280" y="12" width="140" height="30" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[NUMERO DE ORDEN]]></text>
+			<box>
+				<pen lineColor="#121212"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="9d27f802-11d9-4ae2-bf8c-7ef682808e73" mode="Opaque" x="280" y="42" width="140" height="30" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="16.0" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[HM/HRS]]></text>
+			<box>
+				<pen lineColor="#121212"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+			</box>
+		</element>
+		<element kind="textField" uuid="6fbe4437-64d0-423b-abab-ebecd765b3eb" mode="Transparent" x="140" y="12" width="140" height="30" forecolor="#050505" backcolor="#FFFFFF" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{descrip}]]></expression>
+			<box>
+				<pen lineStyle="Solid"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+		<element kind="textField" uuid="86088889-53a3-4f36-9e52-e4b54737680a" mode="Transparent" x="140" y="42" width="140" height="30" forecolor="#050505" backcolor="#FFFFFF" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{fecha}]]></expression>
+			<box>
+				<pen lineStyle="Solid"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+		<element kind="textField" uuid="d9affff1-f61e-4304-bdda-e2beb716974e" x="420" y="12" width="135" height="30" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$P{secuencia}]]></expression>
+			<box>
+				<pen lineStyle="Solid"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+		<element kind="textField" uuid="db4cd162-e67e-443e-87de-046900cc1ed8" x="420" y="42" width="135" height="30" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{km}!= 0 ? $F{km} + " km" : $F{hrs}!= 0 ? $F{hrs} + " hrs" : "Sin datos"]]></expression>
+			<box>
+				<pen lineStyle="Solid"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+	</pageHeader>
+	<detail>
+		<band height="265" splitType="Stretch">
+			<element kind="staticText" uuid="1609bda0-f747-4ca1-aa28-d0efe0b4b670" mode="Opaque" x="0" y="0" width="140" height="80" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="16.0" hTextAlign="Center" vTextAlign="Middle">
+				<paragraph lineSpacing="Single"/>
+				<text><![CDATA[Trabajo descripción]]></text>
+				<box>
+					<pen lineColor="#121212"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="722509b5-d3f9-4381-a53c-bacb8d6e911f" mode="Opaque" x="0" y="80" width="140" height="80" forecolor="#FFFFFF" backcolor="#757575" fontName="Roboto Black" fontSize="16.0" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[Comentarios adicionales]]></text>
+				<box>
+					<pen lineColor="#121212"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#121212"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="b3064824-3eb0-44b9-af9d-80e5518ad204" mode="Transparent" x="140" y="0" width="415" height="80" forecolor="#050505" backcolor="#FFFFFF" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{notas}]]></expression>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="bd7e3d9e-1fe9-44f4-a123-733f75aeb479" mode="Transparent" x="140" y="80" width="415" height="80" forecolor="#050505" backcolor="#FFFFFF" fontName="Roboto Medium" fontSize="14.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{obsactuar}]]></expression>
+				<box>
+					<pen lineStyle="Solid"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+	<noData height="60">
+		<element kind="staticText" uuid="1a0c00ce-d827-49c8-ba6d-25c0f79023b2" x="120" y="15" width="300" height="30" forecolor="#FC082C" fontSize="19.0" italic="true" hTextAlign="Center">
+			<text><![CDATA[No hay datos para mostrar]]></text>
+		</element>
+	</noData>
+</jasperReport>

@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ADM013_historico_cheques_grupos" pageWidth="1160" pageHeight="595" orientation="Landscape" columnWidth="1120" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a3b8c4d-9e1f-4a2d-b5a7-89c6f4e5d6a1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GM"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="StyleHeader" mode="Opaque" forecolor="#FFFFFF" backcolor="#486666" isBold="true"/>
+	<style name="StyleCartera" mode="Opaque" forecolor="#006600" backcolor="#E6FFE6">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{dias_restantes} < 5]]></conditionExpression>
+			<style forecolor="#990000" backcolor="#FFCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Subtitulo" mode="Opaque">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{estado}.equals("ENTREGADO")]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#4CAF50" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{estado}.equals("EN CARTERA")]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#607D8B" isBold="true"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{estado}.equals("DEPOSITADO")]]></conditionExpression>
+			<style forecolor="#FFFFFF" backcolor="#FF9800" isBold="true"/>
+		</conditionalStyle>
+	</style>
+	<style name="StyleEstadoCheque" mode="Opaque">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{estado}.equals("ENTREGADO")]]></conditionExpression>
+			<style forecolor="#666666" backcolor="#F0F0F0"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{estado}.equals("DEPOSITADO")]]></conditionExpression>
+			<style forecolor="#666666" backcolor="#BAC4B9"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$F{estado}.equals("ENTREGADO") && $F{dias_restantes} >= 0]]></conditionExpression>
+			<style forecolor="#006600" backcolor="#E6FFE6"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[!$F{estado}.equals("ENTREGADO") && $F{dias_restantes} < 0]]></conditionExpression>
+			<style forecolor="#990000" backcolor="#FFCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="StyleEntregado" mode="Opaque" forecolor="#666666" backcolor="#F0F0F0"/>
+	<style name="RowStyle">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E0E0E0"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="fechaDesde" class="java.sql.Date">
+		<parameterDescription><![CDATA[Fecha inicial del rango]]></parameterDescription>
+	</parameter>
+	<parameter name="fechaHasta" class="java.sql.Date">
+		<parameterDescription><![CDATA[Fecha final del rango]]></parameterDescription>
+	</parameter>
+	<parameter name="CLIENTE_FILTRO" class="java.lang.String"/>
+	<parameter name="NOMBRE_CLIENTE" class="java.lang.String"/>
+	<parameter name="NUMERO_CHEQUE" class="java.lang.String">
+		<parameterDescription><![CDATA[Número o parte del número de cheque]]></parameterDescription>
+	</parameter>
+	<parameter name="MOSTRAR_CARTERA" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MOSTRAR_ENTREGADOS" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MOSTRAR_DEPOSITADOS" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[Boolean.TRUE]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+    c.id,
+    c.tipo,
+    c.banco,
+    c.nroidentificador,
+    c.fechacobro,
+    c.fechaingreso,
+    c.importe,
+    rc_in.clientname as cliente_origen,
+    rc_out.clientname as cliente_destino,
+    rc_out.fecha as fecha_salida,
+  rc_out.referenciatexto AS referencia_texto_out,
+	rc_in.referenciatexto AS referencia_texto_in,
+    CASE 
+        WHEN c.outregistrocuerpoid IS NULL THEN 'EN CARTERA'
+        WHEN rc_out.clientname LIKE '%Proveedor generico%' THEN 'DEPOSITADO'
+        ELSE 'ENTREGADO'
+    END as estado,
+    CASE
+        WHEN c.outregistrocuerpoid IS NULL THEN 1
+        WHEN rc_out.clientname LIKE '%Proveedor generico%' THEN 3
+        ELSE 2
+    END as orden_grupo,
+    c.fechacobro::date - CURRENT_DATE as dias_restantes
+FROM test9000.cartera c
+INNER JOIN test9000.registrocuerpo rcu_in ON rcu_in.id = c.inregistrocuerpoid
+INNER JOIN test9000.registrocab rc_in ON rc_in.id = rcu_in.presupcabid
+LEFT JOIN test9000.registrocuerpo rcu_out ON rcu_out.id = c.outregistrocuerpoid
+LEFT JOIN test9000.registrocab rc_out ON rc_out.id = rcu_out.presupcabid
+WHERE 1=1
+AND (
+    -- Para cheques en cartera (estado = EN CARTERA), filtramos por fechaingreso
+    (c.outregistrocuerpoid IS NULL AND (
+        COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = rc_in.fecha
+        OR rc_in.fecha BETWEEN 
+            COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '6 month') 
+            AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    ))
+    OR
+    -- Para cheques entregados o depositados (estado = ENTREGADO o DEPOSITADO), filtramos por fecha_salida (rc_out.fecha)
+    (c.outregistrocuerpoid IS NOT NULL AND (
+        COALESCE($P{fechaDesde}, $P{fechaHasta}, CURRENT_DATE) = rc_out.fecha
+        OR rc_out.fecha BETWEEN 
+            COALESCE($P{fechaDesde}, CURRENT_DATE - INTERVAL '6 month') 
+            AND COALESCE($P{fechaHasta}, CURRENT_DATE)
+    ))
+)
+
+-- Búsqueda insensible a mayúsculas/minúsculas para número de cheque
+AND ($P{NUMERO_CHEQUE} IS NULL OR $P{NUMERO_CHEQUE}='' OR LOWER(c.nroidentificador) LIKE '%' || LOWER($P{NUMERO_CHEQUE}) || '%')
+
+-- Filtro por cliente (origen o destino) insensible a mayúsculas/minúsculas
+AND (
+    $P{NOMBRE_CLIENTE} IS NULL OR $P{NOMBRE_CLIENTE} = ''
+    OR (
+        $P{CLIENTE_FILTRO} IS NULL
+        OR $P{CLIENTE_FILTRO} = ''
+        OR (
+            $P{CLIENTE_FILTRO} ILIKE 'ORIGEN' AND rc_in.clientname ILIKE '%' || $P{NOMBRE_CLIENTE} || '%'
+        )
+        OR (
+            $P{CLIENTE_FILTRO} ILIKE 'DESTINO' AND rc_out.clientname ILIKE '%' || $P{NOMBRE_CLIENTE} || '%'
+        )
+        OR (
+            $P{CLIENTE_FILTRO} ILIKE 'AMBOS' AND (
+                rc_in.clientname ILIKE '%' || $P{NOMBRE_CLIENTE} || '%' 
+                OR rc_out.clientname ILIKE '%' || $P{NOMBRE_CLIENTE} || '%'
+            )
+        )
+    )
+)
+ORDER BY orden_grupo, c.fechacobro]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id"/>
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="tipo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="banco" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="banco"/>
+		<property name="com.jaspersoft.studio.field.label" value="banco"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="nroidentificador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nroidentificador"/>
+		<property name="com.jaspersoft.studio.field.label" value="nroidentificador"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="fechacobro" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechacobro"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechacobro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="fechaingreso" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fechaingreso"/>
+		<property name="com.jaspersoft.studio.field.label" value="fechaingreso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="importe" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="importe"/>
+		<property name="com.jaspersoft.studio.field.label" value="importe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cartera"/>
+	</field>
+	<field name="cliente_origen" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cliente_origen"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente_origen"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="cliente_destino" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cliente_destino"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente_destino"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="fecha_salida" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_salida"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_salida"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="referencia_texto_out" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencia_texto_out"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencia_texto_out"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="referencia_texto_in" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencia_texto_in"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencia_texto_in"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="registrocab"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+	</field>
+	<field name="orden_grupo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="orden_grupo"/>
+		<property name="com.jaspersoft.studio.field.label" value="orden_grupo"/>
+	</field>
+	<field name="dias_restantes" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="dias_restantes"/>
+		<property name="com.jaspersoft.studio.field.label" value="dias_restantes"/>
+	</field>
+	<variable name="TotalCartera" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("EN CARTERA") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalEntregados" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("ENTREGADO") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalDepositados" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("DEPOSITADO") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalCarteraGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="GrupoEstado" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("EN CARTERA") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalEntregadosGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="GrupoEstado" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("ENTREGADO") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<variable name="TotalDepositadosGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="GrupoEstado" calculation="Sum">
+		<variableExpression><![CDATA[$F{estado}.equals("DEPOSITADO") ? $F{importe} : 0]]></variableExpression>
+	</variable>
+	<filterExpression><![CDATA[($P{MOSTRAR_CARTERA} && $F{estado}.equals("EN CARTERA")) ||
+    ($P{MOSTRAR_ENTREGADOS} && $F{estado}.equals("ENTREGADO")) ||
+    ($P{MOSTRAR_DEPOSITADOS} && $F{estado}.equals("DEPOSITADO"))]]></filterExpression>
+	<group name="GrupoEstado">
+		<groupExpression><![CDATA[$F{estado}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<staticText>
+					<reportElement style="Subtitulo" x="0" y="2" width="210" height="20" forecolor="#FFFFFF" uuid="8d899590-3a5b-4f08-b853-ee93d41636bf">
+						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+						<paragraph leftIndent="20" rightIndent="0"/>
+					</textElement>
+					<text><![CDATA[Cheques ]]></text>
+				</staticText>
+				<textField>
+					<reportElement style="Subtitulo" x="99" y="2" width="1000" height="20" forecolor="#FFFFFF" uuid="5c86aae1-0e8c-449a-9fac-d423d341bd68">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font size="14" isBold="true"/>
+						<paragraph leftIndent="20"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="25">
+				<textField>
+					<reportElement x="867" y="5" width="150" height="20" backcolor="#E0E0E0" uuid="40afe89b-f2fe-4ab7-ac15-e0af89cc47c2">
+						<printWhenExpression><![CDATA[$F{estado}.equals("EN CARTERA")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal en Cartera:"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="1037" y="5" width="83" height="20" backcolor="#E0E0E0" uuid="db98df1b-9206-4428-83aa-a8969dab7995">
+						<printWhenExpression><![CDATA[$F{estado}.equals("EN CARTERA")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TotalCarteraGrupo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="867" y="5" width="150" height="20" backcolor="#E0E0E0" uuid="904caf0c-16a3-4685-b456-e69a103c2aa5">
+						<printWhenExpression><![CDATA[$F{estado}.equals("ENTREGADO")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal Entregados:"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="1037" y="5" width="83" height="20" backcolor="#E0E0E0" uuid="5b1965f9-c19b-430e-a96c-98195f6219e3">
+						<printWhenExpression><![CDATA[$F{estado}.equals("ENTREGADO")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TotalEntregadosGrupo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="867" y="5" width="150" height="20" backcolor="#E0E0E0" uuid="38d59ec7-8731-4b00-b569-b2cfd546a44d">
+						<printWhenExpression><![CDATA[$F{estado}.equals("DEPOSITADO")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Subtotal Depositados:"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="1037" y="5" width="83" height="20" backcolor="#E0E0E0" uuid="5d2b0f06-bfe9-4206-a851-3de094edcd9f">
+						<printWhenExpression><![CDATA[$F{estado}.equals("DEPOSITADO")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TotalDepositadosGrupo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="1017" y="5" width="20" height="20" uuid="3ccae68e-ee49-4c22-80c2-63c370f8c7c9">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["$"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="56">
+			<staticText>
+				<reportElement x="1" y="13" width="1119" height="30" forecolor="#486666" uuid="898ffd3c-52f4-4080-aba9-bcd9b93bfa5c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="22"/>
+				</textElement>
+				<text><![CDATA[CHEQUES]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30">
+			<staticText>
+				<reportElement style="StyleHeader" x="0" y="0" width="90" height="30" uuid="902fb58a-1afd-468b-9a15-bd17544a5d9c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[N° Cheque]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="90" y="0" width="100" height="30" uuid="5c027a4b-794f-48bc-8155-24291a88f134"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Banco]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="301" y="0" width="100" height="30" uuid="a860d4dc-99bc-4e47-b9d8-da8f58bb66d2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[F. Ingreso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="401" y="0" width="100" height="30" uuid="cd41d883-1c47-4879-a3b4-2fb96de28596"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[F. Cobro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="501" y="0" width="116" height="30" uuid="029a3a7b-a79b-4cdb-953c-cff1be5ce3ec"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Días Restantes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="617" y="0" width="150" height="30" uuid="db7daf7b-b9da-4714-b5d7-febd0a75d9af"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="767" y="0" width="150" height="30" uuid="07ebbe13-1af8-4429-973e-0915ee7d4a57"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="1017" y="0" width="103" height="30" uuid="acd90454-1579-4aaa-8ca6-ad09784f9a5f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="917" y="0" width="100" height="30" uuid="f4b25801-30d2-4aba-be84-a8a3ec4ca5bc"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[F. Entrega]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="StyleHeader" x="190" y="0" width="111" height="30" uuid="daf29da7-3ee7-4af8-b399-ad8fc327b302"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Referencia]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<textField>
+				<reportElement style="StyleEstadoCheque" x="0" y="2" width="90" height="20" uuid="a275acaf-97a4-48c8-bcb6-99d4f5c042fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nroidentificador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="90" y="2" width="100" height="20" uuid="b2efcf89-0dde-43fe-a7cb-808f5b06e3df"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{banco}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement style="RowStyle" x="301" y="2" width="100" height="20" uuid="6650cb86-ed94-4bd2-8501-b649e25e6f84"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fechaingreso}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement style="RowStyle" x="401" y="2" width="100" height="20" uuid="c3544afe-78cc-4c25-8574-16cfd64551ed"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fechacobro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="StyleEstadoCheque" x="501" y="2" width="116" height="20" uuid="c62eb862-2a96-4a4c-8967-6325ceb9a4df"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estado}.equals("ENTREGADO") 
+        ? "Entregado" + ($F{fecha_salida} != null 
+            ? " (" + (new java.util.Date().getTime() - $F{fecha_salida}.getTime()) / (1000 * 60 * 60 * 24) + " días)" 
+            : "") 
+        : $F{estado}.equals("DEPOSITADO")
+            ? "Depositado" + ($F{fecha_salida} != null 
+                ? " (" + (new java.util.Date().getTime() - $F{fecha_salida}.getTime()) / (1000 * 60 * 60 * 24) + " días)" 
+                : "")
+        : ($F{dias_restantes} >= 0 
+            ? "Faltan " + $F{dias_restantes} + " días" 
+            : "Para cobrar hace " + (-$F{dias_restantes}) + " días")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="617" y="2" width="150" height="20" uuid="4a5e7bcc-838a-4854-9be0-f1302746d288"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cliente_origen}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="767" y="2" width="150" height="20" uuid="1b35b658-1416-4f25-adce-a888aeb77655"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cliente_destino} == null ? "-" : $F{cliente_destino}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
+				<reportElement style="RowStyle" x="1037" y="2" width="83" height="20" uuid="658d662d-bd96-4845-8dc6-edf7158de7c4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement style="RowStyle" x="917" y="2" width="100" height="20" uuid="5a5e8949-ea63-4982-b1b4-6614466ba986"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fecha_salida} == null ? "-" : $F{fecha_salida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="1017" y="2" width="20" height="20" uuid="e62d15f8-3c4b-4670-8e23-c6216059f74f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["$"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="RowStyle" x="190" y="2" width="111" height="20" uuid="0374e6fa-aa82-4296-b5c2-a7f4bd5d8a8e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estado}.equals("EN CARTERA") ? $F{referencia_texto_in} : $F{referencia_texto_out}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="29">
+			<textField>
+				<reportElement style="StyleHeader" x="867" y="4" width="150" height="20" forecolor="#FFFFFF" backcolor="#486666" uuid="689a8bc8-719d-49a2-910f-ca5465b6953b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL GENERAL:"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement style="StyleHeader" x="1037" y="4" width="83" height="20" forecolor="#FFFFFF" backcolor="#486666" uuid="8aae532f-c401-4b9a-9d8e-b23d421ed229"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalCartera}.add($V{TotalEntregados}).add($V{TotalDepositados})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="StyleHeader" x="1017" y="4" width="20" height="20" uuid="4f019cac-4292-4751-9dbb-fef1eb2e6fb9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["$"]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
